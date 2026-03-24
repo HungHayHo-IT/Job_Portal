@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { companyApi } from '../api/companyApi';
 
 export const useCompanies = () => {
   const [companies, setCompanies] = useState([]);
@@ -6,25 +7,31 @@ export const useCompanies = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchCompanies = async () => {
       try {
         setLoading(true);
-        // Gọi API đến backend Spring Boot của bạn
-        const response = await fetch('http://localhost:8082/api/v1/companies');
-        if (!response.ok) {
-          throw new Error('Lỗi khi tải dữ liệu từ server');
-        }
-        const data = await response.json();
+        setError(null);
+
+        const data = await companyApi.getAllCompanies({
+          signal: abortController.signal,
+        });
+
         setCompanies(data);
       } catch (err) {
-        setError(err.message);
+        if (err?.name !== 'CanceledError' && err?.name !== 'AbortError') {
+          setError(err?.message || 'Lỗi khi tải dữ liệu từ server');
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchCompanies();
+    return () => abortController.abort();
   }, []);
 
   return { companies, loading, error };
 };
+
