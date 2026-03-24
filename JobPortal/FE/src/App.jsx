@@ -1,18 +1,41 @@
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/layout/Navbar";
-import HeroSection from "./components/home/Hero"; // Đổi tên import cho khớp
+import Footer from "./components/layout/Footer";
+import HeroSection from "./components/home/Hero";
 import { CompaniesList } from "./components/home/CompaniesList";
 import { CTASection } from "./components/home/CTASection";
-import Footer from "./components/layout/Footer"; // Thêm import Footer
+import { Contact } from "lucide-react";
+import ContactUsPage from "./pages/ContactUsPage";
 
-function App() {
+// Tạm thời tách nội dung trang chủ ra một function
+function Home() {
   return (
-    <div className="min-h-screen bg-[#0B0F19] font-sans">
-      <Navbar />
+    <>
       <HeroSection />
       <main>
         <CompaniesList />
         <CTASection />
       </main>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <div className="min-h-screen bg-[#0B0F19] font-sans flex flex-col">
+      <Navbar />
+      
+      {/* Vùng nội dung sẽ thay đổi theo URL */}
+      <div className="flex-grow">
+        <Routes>
+          {/* Định nghĩa các đường dẫn */}
+          <Route path="/" element={<Home />} />
+          <Route path="/contact-us" element={<ContactUsPage/>} />
+          <Route path="/jobs" element={<div className="text-white p-10">Trang tìm việc (Sắp ra mắt)</div>} />
+          <Route path="/companies" element={<div className="text-white p-10">Trang công ty (Sắp ra mắt)</div>} />
+        </Routes>
+      </div>
+
       <Footer />
     </div>
   );

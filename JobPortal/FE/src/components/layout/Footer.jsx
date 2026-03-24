@@ -52,7 +52,7 @@ export default function Footer() {
               Support
             </h5>
             <ul className="space-y-3 text-sm text-gray-500">
-              <li><Link to="/help" className="hover:text-cyan-400 transition">Help Center</Link></li>
+              <li><Link to="/contact-us" className="hover:text-cyan-400 transition">Contact us</Link></li>
               <li><Link to="/community" className="hover:text-cyan-400 transition">Community</Link></li>
             </ul>
           </div>
