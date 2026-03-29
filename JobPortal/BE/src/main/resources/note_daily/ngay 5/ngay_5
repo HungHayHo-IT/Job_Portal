@@ -1,0 +1,44 @@
+*** Relationship JPA
+
+-Jpa mapping: là cách chúng ta dùng các annotation (như @Entity, @Id, @OneToMany, @ManyToOne, …)
+để ánh xạ các lớp Java (entity) thành các bảng trong cơ sở dữ liệu quan hệ, và ánh xạ các thuộc tính,
+ mối quan hệ giữa chúng thành các cột và khóa ngoại.
+-Cascade (truyền thao tác) là cơ chế cho phép một thao tác trên entity cha sẽ được lan truyền tự động
+đến các entity con liên quan.
+-@NotnNull ở job để nói răng mọi công việc để phải có thuộc 1 công ty
+-orphanRemoval = true Nói một cách đơn giản nhất: Nếu bạn xóa một "con" ra khỏi danh sách của "cha",
+Hibernate sẽ tự động xóa luôn bản ghi đó trong cơ sở dữ liệu. Nếu không có thuộc tính này, thực thể "con" sẽ chỉ
+bị ngắt kết nối (set Foreign Key về NULL) chứ không bị xóa hẳn, dẫn đến dữ liệu bị "mồ côi" (orphan).
+
+Khi orphanRemoval = false (Mặc định): Nếu bạn xóa một sản phẩm ra khỏi giỏ hàng trên giao diện, trong database,
+sản phẩm đó vẫn tồn tại nhưng không thuộc về giỏ hàng nào cả. Nó nằm "vất vưởng" trong bảng Items.
+
+Khi orphanRemoval = true: Nếu bạn xóa sản phẩm ra khỏi danh sách của đối tượng Cart, Hibernate sẽ hiểu là:
+"À, sản phẩm này không còn cần thiết nữa" và thực hiện lệnh DELETE trong database luôn.
+
+-Trong ORM, Fetch xác định chiến lược tải dữ liệu liên quan. Khi bạn lấy một đối tượng (ví dụ: Job) từ database,
+bạn có muốn lấy luôn cả đối tượng liên quan (Company) hay không?
++FetchType.LAZY :@OneToMany, @ManyToMany : Khi cần mới gọi đối tượng liên quan ra
+Ưu điểm: Tiết kiệm bộ nhớ, giảm tải cho database nếu bạn không dùng đến dữ liệu liên quan.
++FetchType.EAGER: @ManyToOne, @OneToOne : dữ liệu luôn có sẵn ngay lập tức để dùng
+Nhược điểm: Nếu bạn có danh sách 100 Jobs và mỗi Job lấy Eager 1 Company, nó có
+ thể gây nặng hệ thống nếu dữ liệu Company quá lớn và không cần thiết.
+
+--@OnDelete(action = OnDeleteAction.CASCADE) – Xóa cascade ở cấp database
+Annotation này tạo ra ràng buộc (constraint) ngay trong cơ sở dữ liệu, có nội dung:
+
+“Nếu một dòng trong bảng company bị xóa, thì tất cả các dòng trong bảng job có
+company_id tương ứng cũng sẽ bị tự động xóa theo.”
+Nó hoạt động ở tầng database, không phải tầng Hibernate. Khi bạn xóa một công ty (ví dụ DELETE FROM company WHERE id = 1), database sẽ tự động xóa tất cả job liên quan,
+ đảm bảo không có dữ liệu “mồ côi” và tránh lỗi vi phạm khóa ngoại.
+
+
+-joinColumn:@JoinColumn là một annotation dùng để xác định cột nào trong một bảng sẽ đóng vai trò là Khóa ngoại
+(Foreign Key) để liên kết sang bảng khác.
+ví dụ @ManyToOne
+      @JoinColumn(name = "company_id", nullable = false)
+      private Company company;
+Trong bảng job sẽ có một cột tên là company_id.
+Cột này là khóa ngoại, tham chiếu đến khóa chính (id) của bảng company.
+nullable = false nghĩa là mỗi job bắt buộc phải thuộc về một công ty (cột không được để trống).
+

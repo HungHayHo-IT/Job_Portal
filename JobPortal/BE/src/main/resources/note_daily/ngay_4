@@ -1,0 +1,13 @@
+
+-Ngày 4: kỹ năng thiết yếu của backend
+    -Xây dựng GlobalExeptionHandler mục đích: +Tránh lặp try catch viết 1 lần áp dụng toàn b controller
+                                              +Trả response đồng nhất về cùng một mẫu
+                                              +Bắt nhiều loại exception khác nhau
+                                              +Tách business logic khỏi error handling
+    -Xử dụng anotation @RestControllerAdvice(trả về JSON) hoặc @ControllerAdvice(Dùng html để trả về) để bắt lỗi tòan cục
+    -Xây dựng ErrorResponeDto: +apiPath: đường dẫn api
+                               +errorCode: mã Http Lỗi trả về
+                               +errorMessage: thông điệp lỗi
+                               +errorTime: Thời gian xảy ra lỗi
+
+
