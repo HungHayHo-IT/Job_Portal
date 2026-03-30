@@ -1,0 +1,25 @@
+-Ngày 1:
+    +Chuẩn bị phân tích yêu cầu dự án
+    +Sử dụng công nghệ :-Backend:  java , spring ecosystem , database(Docker ,sqlelection)
+                        -frontend: html , css, js , ReactJS (AI hỗ trợ cursor , ui/ux: AI stitch)
+    +Tạo repository trên github: job_portal up 2 file BE và FE
+
+
+    - kết nối database thông qua docker để tạo được một database cần tạo file
+    compose.yml rồi thêm đoạn
+    #tạo docker server mới để kết nối database
+    #services:
+    #  dbservice:
+    #    image: mysql:latest
+    #    ports:
+    #      - "3308:3306"
+    #    environment:
+    #      MYSQL_ROOT_PASSWORD: "123456"
+    #      MYSQL_DATABASE: "jobportal"
+    #    volumes:
+    #      - mysql_data:/var/lib/mysql
+    #
+    #volumes:
+    #  mysql_data:
+
+    sau đó dùng sqlelection để tạo database rồi kết nối

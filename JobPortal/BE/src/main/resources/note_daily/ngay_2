@@ -1,0 +1,4 @@
+-Ngày 2:
+    +Frontend: xây dựng trang chủ hiển thị các company
+    +backend: xây dựng api lấy danh sách các công ty gửi đến fe
+    +Tạo bảng Companies trên database

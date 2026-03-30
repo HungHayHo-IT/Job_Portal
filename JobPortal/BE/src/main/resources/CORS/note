@@ -1,0 +1,37 @@
+-----------1. CORS là gì và tại sao chúng ta cần nó?---------------------
+Trả lời: CORS là một cơ chế dựa trên HTTP Header cho phép trình duyệt và máy chủ tương tác với nhau để xác định xem có an toàn hay không khi cho phép một yêu cầu từ một nguồn (Origin) khác với nguồn hiện tại.
+
+Tại sao cần: Nó tồn tại để bảo vệ người dùng khỏi các cuộc tấn công CSRF (Cross-Site Request Forgery). Mặc định, trình duyệt áp dụng SOP (Same-Origin Policy) — tức là chỉ cho phép các script trên trang web truy cập dữ liệu từ cùng một Domain, Protocol và Port. CORS là "ngoại lệ" an toàn để mở khóa SOP.
+
+-------------------------------------------------------------------
+2. "Origin" được định nghĩa như thế nào trong CORS?
+
+Câu này nhằm kiểm tra xem bạn có nắm chắc kiến thức cơ bản không. Một Origin bao gồm 3 thành phần:
+
+Protocol (http vs https)
+
+Domain (example.com)
+
+Port (8080 vs 3000)
+
+Lưu ý: Nếu chỉ cần 1 trong 3 cái này khác nhau, trình duyệt sẽ coi đó là Cross-Origin. Ví dụ: http://localhost:3000 (React) và http://localhost:8080 (Spring Boot) là 2 origin khác nhau vì khác Port.
+-----------------------------------------------------------------------------------------------
+3. Preflight Request là gì? Nó dùng phương thức HTTP nào?
+Đây là câu hỏi nâng cao để phân biệt ứng viên khá và giỏi.
+
+Trả lời: Khi bạn gửi một request "không đơn giản" (ví dụ: có chứa header tùy chỉnh hoặc dùng method PUT, DELETE, PATCH), trình duyệt sẽ tự động gửi một request "thăm dò" trước.
+
+Phương thức: Nó sử dụng OPTIONS.
+
+Mục đích: Để hỏi Server xem: "Tôi định gửi một request PUT từ domain này, ông có cho phép không?". Nếu Server trả về OK, request thật mới được gửi đi.
+-----------------------------------------------------------------------------------------------
+4. Các Header quan trọng nhất trong cấu hình CORS là gì?
+Nhà tuyển dụng muốn nghe tên các Header cụ thể:
+
+Access-Control-Allow-Origin: Chỉ định domain nào được phép truy cập (ví dụ: http://localhost:3000 hoặc * cho tất cả).
+
+Access-Control-Allow-Methods: Các phương thức được phép (GET, POST, PUT, DELETE...).
+
+Access-Control-Allow-Headers: Các header tùy chỉnh được phép gửi lên.
+
+Access-Control-Allow-Credentials: Có cho phép gửi Cookie/Authentication header không (thường set là true).

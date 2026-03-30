@@ -1,0 +1,91 @@
+Slide 1: Docker là gì và tại sao nên dùng nó? (Tổng quan)
+Slide này định nghĩa Docker bằng những hình ảnh ẩn dụ rất dễ hình dung.
+
+Định nghĩa: Docker là một công cụ giúp bạn "đóng gói" ứng dụng và chạy nó ở bất cứ đâu.
+
+Ẩn dụ "Chiếc hộp ma thuật": Hãy tưởng tượng Docker là một chiếc hộp chứa tất cả mọi thứ để phần mềm chạy được:
+
+Mã nguồn ứng dụng.
+
+Các phần mềm hỗ trợ (ví dụ: Python, Java, Node.js).
+
+Các cài đặt cấu hình.
+
+Kết quả: Bạn mang chiếc hộp này đi đâu (máy tính cá nhân, máy chủ công ty, đám mây), ứng dụng vẫn chạy y hệt như vậy.
+
+Ẩn dụ "Container vận chuyển": Giống như container trong ngành vận tải giúp hàng hóa được chuyển từ tàu thủy sang xe tải mà không cần tháo dỡ, Docker giúp phần mềm chạy ổn định trên mọi hệ điều hành.
+
+Vấn đề trước khi có Docker: * "Chạy được trên máy tôi nhưng không chạy được trên máy khách hàng".
+
+Môi trường code (DEV), kiểm thử (QA) và thực tế (PROD) khác nhau gây lỗi.
+
+Cài đặt thủ công rất tốn thời gian và dễ sai sót.
+
+Giải pháp của Docker: Đảm bảo tính nhất quán (mọi nơi như một), cách ly (không lẫn lộn giữa các app), thiết lập nhanh và triển khai thần tốc.
+-------------------------------------------------------------------------------------------------
+
+Slide 2: Ví dụ thực tế - Trước và Sau khi có Docker
+Slide này tập trung vào sự khác biệt kinh khủng về mặt thời gian và công sức.
+
+Trước khi có Docker: Để chạy một ứng dụng (ví dụ Spring Boot), lập trình viên phải cài thủ công một "núi" thứ: Java (đúng phiên bản), Maven, Database (MySQL), Cache (Redis), Message Queue (RabbitMQ)... Chỉ cần sai một phiên bản Java là hệ thống "sập".
+
+Với Docker: Bạn chỉ cần đúng một câu lệnh duy nhất: docker-compose up.
+
+Lợi ích vượt trội:
+
+Tất cả các dịch vụ (App, Database, Redis...) tự động khởi chạy cùng nhau.
+
+Không còn lo xung đột phiên bản phần mềm trên máy tính.
+
+Điểm sáng nhất: Nhân viên mới gia nhập đội ngũ chỉ mất 2 phút để chạy được dự án, thay vì mất cả ngày để cài đặt môi trường.
+-------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+Slide 3: Thuật ngữ Docker - Image và Container
+Đây là hai khái niệm quan trọng nhất trong Docker, được giải thích qua ẩn dụ về Làm Bánh.
+
+Docker Image (Bản thiết kế/Công thức):
+
+Nó là một tập tin tĩnh, chứa mã nguồn, thư viện và các cài đặt.
+
+Ẩn dụ: Hãy coi Image là một Công thức làm bánh đã được đo đạc chính xác nguyên liệu. Bạn không thể "ăn" công thức, và bạn cũng không thay đổi được công thức khi nó đã viết xong (Read-only).
+
+Có thể chia sẻ Image dễ dàng (lên Docker Hub).
+
+Docker Container (Ứng dụng đang chạy):
+
+Container là một thực thể đang hoạt động được tạo ra từ Image.
+
+Ẩn dụ: Nếu Image là công thức, thì Container chính là Chiếc bánh thật mà bạn đã nướng xong.
+
+Từ một Image (một công thức), bạn có thể tạo ra hàng nghìn Container (hàng nghìn chiếc bánh) giống hệt nhau.
+
+Đặc tính: Nhẹ, khởi động cực nhanh, và quan trọng là chúng hoàn toàn tách biệt với nhau (như các quả bong bóng riêng biệt).
+-------------------------------------------------------------------------------------------------
+
+
+
+Slide 4: Thuật ngữ Docker - Volume và các khái niệm bổ trợ
+Slide cuối cùng giải thích cách Docker lưu trữ dữ liệu và các công cụ đi kèm.
+
+Docker Volume (Bộ nhớ vĩnh viễn):
+
+Vấn đề: Container có tính chất "tạm thời". Nếu bạn xóa Container, dữ liệu bên trong nó (như danh sách khách hàng trong DB) sẽ mất sạch.
+
+Giải pháp: Volume giống như một cái USB hoặc ổ cứng ngoài cắm vào Container. Dữ liệu sẽ nằm ở đó mãi mãi, kể cả khi bạn xóa hay khởi động lại Container.
+
+Các thuật ngữ cần nhớ khác:
+
+Dockerfile: File văn bản chứa các bước để "nấu" ra một Image (tự viết công thức).
+
+Docker Hub: Giống như "App Store" hay "Google Play", nơi bạn lên đó tải các Image có sẵn về dùng (ví dụ tải Image MySQL, Ubuntu).
+
+Port Mapping (Ánh xạ cổng): Container chạy trong một thế giới riêng. Muốn người dùng bên ngoài truy cập được vào web bên trong Container, bạn phải mở một cái "cửa" (ví dụ: cổng 8080 của máy bạn thông với cổng 80 của Container).
+
+Docker Compose: Công cụ điều khiển nhiều Container chạy cùng lúc (giống như nhạc trưởng điều khiển cả dàn nhạc).
+
+Registry: Nơi lưu trữ các Image (Docker Hub là một Registry công cộng phổ biến nhất).

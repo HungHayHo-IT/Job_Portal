@@ -1,4 +1,4 @@
-package com.example.BE.service;
+package com.example.BE.company.service;
 
 import com.example.BE.dto.CompanyDto;
 import com.example.BE.entity.Company;

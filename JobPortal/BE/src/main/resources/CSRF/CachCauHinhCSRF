@@ -1,0 +1,44 @@
+1. Cấu hình CSRF trong Security Filter Chain
+
+return http.csrf(csrfConfig -> csrfConfig
+    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+    .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+
+ -   .csrfTokenRepository(...): Xác định nơi lưu trữ Token.
+
+  -  CookieCsrfTokenRepository: Spring sẽ tạo một Cookie tên là XSRF-TOKEN để chứa mã CSRF.
+
+   - withHttpOnlyFalse(): Rất quan trọng. Mặc định Cookie thường có thuộc tính HttpOnly (chỉ server mới đọc được). Nhưng vì đây là Single Page App (React/Angular), ta cần cho phép JavaScript ở phía Client đọc được giá trị này để đính kèm vào HTTP Header khi gửi yêu cầu POST/PUT.
+
+   - .csrfTokenRequestHandler(...):
+
+   - CsrfTokenRequestAttributeHandler: Đây là trình xử lý mặc định trong Spring Security 6.
+   Nó giúp "đẩy" đối tượng CsrfToken vào trong HttpServletRequest attributes để bạn có thể lấy ra dùng ở các
+    lớp khác (như Controller bên dưới).
+
+2. CsrfController - "Cửa sổ" để lấy mã bí mật
+@GetMapping(path = "/public", version = "1.0")
+public CsrfToken csrfToken(HttpServletRequest request) {
+    return (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+}
+
+Thông thường, Spring Security tự động xử lý Token. Tuy nhiên, trong một số kiến trúc (như khi Client lần đầu truy cập và chưa có Cookie), bạn cần một Endpoint "công khai" để Client chủ động gọi và nhận Token về.
+
+Cơ chế: Khi Client gọi vào đường dẫn /csrf-token/public, Spring Security sẽ tạo ra một mã Token mới (nếu chưa có).
+
+Dòng code request.getAttribute(...): Lấy đối tượng Token mà Spring đã tạo và đặt vào Request trước đó.
+
+Kết quả trả về: Client sẽ nhận được một JSON chứa mã Token (ví dụ: {"token": "abc-123-xyz", "headerName": "X-XSRF-TOKEN", ...}).
+
+3. Luồng hoạt động thực tế (Flow)
+Client (React/Angular): Gọi GET tới /csrf-token/public.
+
+Server: Trả về mã Token và đồng thời set một Cookie XSRF-TOKEN vào trình duyệt.
+
+Client: Đọc mã Token đó từ JSON hoặc từ Cookie.
+
+Client (Khi gửi dữ liệu): Nếu muốn thực hiện lệnh POST /api/save-job, Client phải đính kèm Header:
+
+X-XSRF-TOKEN: [Giá trị mã token vừa lấy]
+
+Server: Kiểm tra Header có khớp với Cookie không. Nếu khớp -> OK, nếu không -> 403 Forbidden.

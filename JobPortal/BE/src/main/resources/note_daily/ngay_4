@@ -1,5 +1,6 @@
 
 -Ngày 4: kỹ năng thiết yếu của backend
+*Xử lý ngoại lệ
     -Xây dựng GlobalExeptionHandler mục đích: +Tránh lặp try catch viết 1 lần áp dụng toàn b controller
                                               +Trả response đồng nhất về cùng một mẫu
                                               +Bắt nhiều loại exception khác nhau
@@ -9,5 +10,111 @@
                                +errorCode: mã Http Lỗi trả về
                                +errorMessage: thông điệp lỗi
                                +errorTime: Thời gian xảy ra lỗi
+*Backend validation: xác minh ở phía máy chủ
+    -Validation lớp phòng thủ cuối cùng  sử dụng các anotation như @NotBlank , @Size v.. ..v...để xác thực dữ liệu
+    Pattern là một annotation trong Jakarta Bean Validation (trước đây là javax.validation). Nó được dùng để kiểm tra giá trị của trường có khớp với một biểu thức chính quy (regex) hay không
+    sử dụng message gửi thông báo khi người dùng nhập sai dữ liệu
+
+    -Khi thực hiện ràng buộc validation các dữ liệu đầu vào @notBlank ,@Email v...v... Nếu người dùng nhập sai ràng buộc nó sẽ gửi đến
+    controller nhận dữ liệu với annotation @Valid khi đó spring sẽ ném ra exception: MethodArgumentNotValidException
+    .Vì vậy phải viết một hàm xử lý exception: MethodArgumentNotValidException ở GlobalException
+    MethodArgumentNotValidException xây dựng để lấy cái fieldError message mà đã xây dựng ở validation
+
+    -HandlerMethodValidationException ảy ra khi validation trên các tham số của phương thức controller (tham số path, query, header, v.v.) thất bại
+    @PathVariable , @RequestParam , @RequestHeader , @ModelAttribute
+
+    -Xây dựng BaseEntity class :  được thiết kế để các entity khác kế thừa nhằm tự động quản lý các trường thông tin về thời gian và người thao tác.
+    rồi các entity sẽ extends BaseEntity
+
+*Theo dõi ai làm gì
+    -Khái niệm Auditing: Auditing trong JPA giúp theo dõi các thay đổi của entity bằng cách tự động ghi lại ai đã tạo
+     hoặc cập nhật bản ghi và thời điểm thay đổi diễn ra
+    4 lợi ích chính:+Giúp duy trì log của các thay đổi dữ liệu
+                    +Hữu ích để theo dõi hành động của người dùng trong database
+                    +Giảm công sức thủ công bằng cách tự động ghi lại thời gian và thông tin người dùng
+                    +Đảm bảo tính toàn vẹn dữ liệu và trách nhiệm giải trình tốt hơn
+    Để kích hoạt auditing, cần thực hiện 3 bước: +Tạo class BaseEntity để xử lý các trường auditing
+                                                 +Sử dụng Spring Security hoặc implementation tùy chỉnh để lấy
+                                                 thông tin người dùng đã sửa dữ liệu
+                                                 +Kích hoạt Auditing trong cấu hình spring-boot-starter-data-jpa
+    AuditorAwareImpl như một cung cấp thông tin người dùng , lắng nghe sự kiện từ entity
+    Class BaseEntity có @EntityListeners(AuditingEntityListener.class) sẽ lắng nghe và tự động điền field
+
+    Luồng hoạt động chính
+
+        [User Code]     [Spring Data JPA]    [AuditingEntityListener]    [AuditorAwareImpl]
+            |                  |                       |                          |
+            |--save(entity)--->|                       |                          |
+            |                  |--@PrePersist event--->|                          |
+            |                  |                       |--getCurrentAuditor()--->|
+            |                  |                       |<--"john"--              |
+            |                  |                       |                          |
+            |                  |                       |--setCreatedBy("john")   |
+            |                  |                       |--setCreatedAt(now)      |
+            |                  |<--persist-------------|                          |
+            |<--saved----------|                       |                          |
+
+*SpringDoc OpenAPI và Swagger là gì
+    Đây là các công cụ giúp tự động tạo tài liệu API cho Spring Boot. Hiểu đơn giản:
+
+    Swagger: Là bộ công cụ giúp mô tả, kiểm tra và test API
+
+    OpenAPI: Là tiêu chuẩn quy định cách viết tài liệu API
+
+    SpringDoc: Là thư viện giúp Spring Boot tự động sinh tài liệu API theo chuẩn OpenAPI
+->chỉ cần viết code, SpringDoc sẽ tự tạo ra một trang web giao diện đẹp để xem và test API,
+không cần viết tài liệu thủ công.
++ lợi ích: Giúp developer hiểu được các endpoint có sẵn và định dạng request/response của chúng
+            Giảm sự phụ thuộc vào việc giải thích thủ công
+            Cải thiện tính khả dụng của API và việc làm quen cho người mới
+            Làm cho việc tích hợp với hệ thống khác dễ dàng hơn
+dùng khi:
+    Đang phát triển API cho ứng dụng web/mobile
+
+    Làm việc theo nhóm có frontend và backend riêng
+
+    Cần tài liệu API để bàn giao hoặc viết hướng dẫn
+
+    Muốn test API nhanh ngay trong quá trình code
+
+
+
+*Request , session ,Application ,web sockett Bean scopes
+
+Scope	        Mô tả
+Request	   |     Một instance mới được tạo cho mỗi HTTP request
+Session	    |   Một instance cho mỗi HTTP session (một người dùng)
+Application  |   Một instance duy nhất cho toàn bộ ứng dụng (giống Singleton nhưng trong context Servlet)
+WebSocket	 |   Một instance cho mỗi kết nối WebSocket
+
+- Request Scope: Bean được tạo mới khi có một HTTP request đến và bị hủy ngay khi request kết thúc.
+Khi nào dùng?
+Lưu dữ liệu tạm thời chỉ dùng trong một request (thông tin form, kết quả xác thực, v.v.).
+Tránh việc bean bị ghi đè bởi request khác.
+
+-Session Scope: Bean được tạo khi session HTTP bắt đầu (lần đầu người dùng truy cập) và
+tồn tại cho đến khi session hết hạn hoặc bị hủy.
+Khi nào dùng?
+Lưu trạng thái người dùng qua nhiều request (giỏ hàng, thông tin đăng nhập, cài đặt cá nhân).
+Cần tính riêng tư giữa các người dùng.
+
+-Application Scope
+Chỉ có một instance duy nhất được tạo và tồn tại trong suốt vòng đời của ứng dụng (từ khi khởi động đến khi dừng).
+ Nó được chia sẻ cho tất cả người dùng, tất cả session, tất cả request.
+Khi nào dùng:
+Lưu cấu hình dùng chung, cache toàn ứng dụng.
+Thống kê toàn cục, metrics.
+Các thành phần không phụ thuộc vào người dùng hay session.
+
+-WebSocket Scope
+Bean được tạo cho mỗi kết nối WebSocket và bị hủy khi kết nối đó đóng
+Khác với HTTP (mỗi request mở kết nối mới, xong đóng lại), WebSocket duy trì một kênh kết nối liên tục giữa client
+và server. Cho phép hai bên gửi dữ liệu bất cứ lúc nào, thích hợp cho ứng dụng thời gian thực.
+
+Khi nào dùng?
+Ứng dụng real-time: chat, game online, cập nhật giá chứng khoán, thông báo đẩy.
+Lưu trạng thái riêng cho mỗi kết nối (tên người dùng, phòng chat, v.v.).
+
+
 
 

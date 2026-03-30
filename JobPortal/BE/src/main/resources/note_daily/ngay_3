@@ -1,0 +1,4 @@
+-Ngày 3:
+     Xây dựng trang Contact us
+     +Frontend : xây dựng trang contact us với form nhập dữ liệu xử lý dữ liệu gửi về BE
+     +Backend: xử lý dữ liệu mà FE gửi về lưu vào database

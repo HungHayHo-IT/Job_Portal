@@ -1,0 +1,31 @@
+1. DTO là gì? (Định nghĩa)
+DTO (Data Transfer Object) là một đối tượng trung gian dùng để vận chuyển dữ liệu giữa các tầng (layers) trong ứng dụng (ví dụ từ Service layer lên Controller/API).
+Đặc điểm quan trọng: DTO chỉ chứa các thuộc tính để lưu trữ dữ liệu (fields), các hàm getter/setter, và không chứa bất kỳ logic nghiệp vụ nào.
+
+2. Loi ich
+Bảo mật (Security): Đây là ý quan trọng nhất. DTO giúp chúng ta ẩn đi những thông tin nhạy cảm của Entity (như mật khẩu, số căn cước, mã bí mật) mà chúng ta không muốn trả về cho phía Client.
+Hiệu suất (Performance): DTO cho phép gộp (aggregate) dữ liệu từ nhiều Entity khác nhau vào một đối tượng duy nhất. Thay vì Client phải gọi 3-4 API để lấy đủ thông tin, họ chỉ cần gọi 1 API trả về 1 DTO duy nhất.
+Sự độc lập (Decoupling): Giúp tách biệt cấu trúc Database và cấu trúc API. Nếu bạn thay đổi tên cột trong Database, bạn chỉ cần sửa logic Mapping mà không làm hỏng giao diện (Frontend) đang dùng API đó.
+VD:
+@Entity
+public class User {
+    private Long id;
+    private String username;
+    private String password; // Thông tin nhạy cảm
+    private String ssn;      // Số an sinh xã hội - cực kỳ nhạy cảm
+    private String email;
+    // ... các trường khác
+}
+-> DTO
+public class UserDTO {
+    private String username;
+    private String email;
+    // Không có password, không có ssn ở đây!
+}
+
+3. SO sanhs dto vaf entity
+Về tính bảo mật: Entity soi chiếu trực tiếp với Database, thường chứa các thông tin nhạy cảm như password hay is_active. Nếu dùng trực tiếp Entity để trả về API, chúng ta vô tình làm lộ cấu trúc DB và các dữ liệu không đáng có. DTO giúp chúng ta đóng gói và lọc bỏ những phần này.
+
+Về tính linh hoạt (Decoupling): Nếu UI cần một cấu trúc dữ liệu khác với Database (ví dụ: gộp Họ và Tên thành một trường fullName), DTO sẽ xử lý việc đó mà không cần sửa đổi bảng trong Database. Điều này giúp Frontend và Backend có thể phát triển độc lập, nếu em đổi tên cột trong DB thì API của em vẫn không bị 'gãy'.
+
+Về hiệu suất: DTO giúp em tránh được lỗi Lazy Loading (khi Jackson cố gắng serialize các quan hệ @OneToMany trong Entity) và giảm dung lượng payload gửi qua mạng."

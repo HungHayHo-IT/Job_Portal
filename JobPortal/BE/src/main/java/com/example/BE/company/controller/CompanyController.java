@@ -1,8 +1,7 @@
-package com.example.BE.controller;
+package com.example.BE.company.controller;
 
 import com.example.BE.dto.CompanyDto;
-import com.example.BE.entity.Company;
-import com.example.BE.service.ICompanyService;
+import com.example.BE.company.service.ICompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +21,7 @@ public class CompanyController {
         this.companyService = companyService;
     }
 
-    @GetMapping()
+    @GetMapping(path = "/public")
     public ResponseEntity<List<CompanyDto>> getAllCompanies(){
         List<CompanyDto> companyList = companyService.getAllCompanies();
         System.out.println("so luong"+ companyList.size());

@@ -1,0 +1,60 @@
+1. Cấu hình "Động cơ" xác thực (AuthenticationManager Bean)
+
+@Bean
+public AuthenticationManager authenticationManager() {
+    var autheticationProvider = new DaoAuthenticationProvider(userDetailsService());
+    autheticationProvider.setPasswordEncoder(passwordEncoder());
+    return new ProviderManager(autheticationProvider);
+}
+Đang làm gì: Đoạn này cấu hình và tạo ra một hạt nhân quản lý xác thực (AuthenticationManager) cho Spring Security.
+
+Chi tiết: Nó tạo ra một DaoAuthenticationProvider (chuyên dùng để xác thực qua database). Bạn "tiêm" vào đó 2 thứ:
+
+userDetailsService(): Dạy nó cách tìm user trong database.
+
+passwordEncoder(): Dạy nó cách kiểm tra mật khẩu đã được băm (hashing).
+
+Code thế để làm gì: Để chuẩn bị sẵn một công cụ mạnh mẽ. Lát nữa ở Controller, chúng ta sẽ gọi công cụ này ra để nó tự động làm phần việc khó nhất là so sánh mật khẩu trong database.
+
+2.Các DTO (Data Transfer Object) - Lớp vận chuyển dữ liệu
+
+Bạn có 3 class/record đóng vai trò như những "chiếc hộp" để đựng dữ liệu giao tiếp giữa Frontend và Backend.
+
+LoginRequestDto(String username, String password):
+
+Hộp đựng dữ liệu đầu vào. Khi người dùng bấm nút Login trên giao diện, frontend sẽ gửi một cục JSON có 2 trường này lên. Việc dùng record (tính năng mới của Java) giúp code cực kỳ ngắn gọn, tự động có sẵn constructor và getter.
+
+UserDto:
+
+Hộp đựng thông tin người dùng. Đặc biệt trong hệ thống tuyển dụng, bạn có thể thấy các trường như role (ứng viên hay nhà tuyển dụng), companyId, companyName để phân quyền và hiển thị giao diện tương ứng.
+
+LoginResponseDto(String message, UserDto user, String jwtToken):
+
+Hộp đựng kết quả trả về. Nếu đăng nhập thành công, backend sẽ trả về một câu thông báo, thông tin cơ bản của user đó, và quan trọng nhất là chiếc "chìa khóa" jwtToken.
+
+3. API Đăng nhập (AuthController)
+@PostMapping(value = "/login/public",version = "1.0")
+public ResponseEntity<LoginResponseDto> apiLogin(@RequestBody LoginRequestDto loginRequestDto) {
+    try {
+        // BƯỚC 1: Đóng gói và Kích hoạt xác thực thủ công
+        var resultAuthentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequestDto.username(), loginRequestDto.password())
+        );
+
+        // BƯỚC 2: Tạo Token
+        String jwtToken = jwtUtil.generateJwtToken(resultAuthentication);
+
+        // BƯỚC 3: Trả về kết quả thành công
+        var userDto = new UserDto(); // *Lưu ý: Chỗ này hiện đang là một object rỗng.
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new LoginResponseDto(HttpStatus.OK.getReasonPhrase(), userDto, jwtToken));
+
+BƯỚC 1: Backend nhận loginRequestDto. Nó nhét username và password vào một cái thẻ tên là UsernamePasswordAuthenticationToken. Sau đó đưa cho authenticationManager kiểm tra (đây chính là Manual Invocation).
+
+Nếu mật khẩu đúng: Hàm này chạy tiếp xuống BƯỚC 2.
+
+Nếu mật khẩu sai: Nó lập tức "văng" lỗi (ném ra Exception) và nhảy thẳng xuống khối catch.
+
+BƯỚC 2: Dùng một class tiện ích JwtUtil để nén thông tin người dùng vừa đăng nhập thành công thành một chuỗi mã hóa gọi là JWT (JSON Web Token).
+
+BƯỚC 3: Đóng gói thông báo thành công (200 OK), thông tin userDto và chuỗi jwtToken để gửi về cho frontend. (Chú ý: Đoạn new UserDto() hiện tại chưa được gán dữ liệu thực, sau này bạn sẽ cần lấy dữ liệu từ resultAuthentication để đắp vào đây).

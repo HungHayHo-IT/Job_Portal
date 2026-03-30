@@ -1,0 +1,30 @@
+1) luồng chạy spring security
+User entered credentials
+Người dùng gửi thông tin đăng nhập (thường qua form login, Basic Auth, hoặc REST API) đến ứng dụng.
+
+Authentication Filter
+Một bộ lọc (filter) như UsernamePasswordAuthenticationFilter sẽ chặn request, trích xuất thông tin đăng nhập (username/password) và tạo ra một đối tượng Authentication (chưa được xác thực).
+
+Authentication Manager
+Đối tượng AuthenticationManager (thường là ProviderManager) nhận Authentication từ filter và chịu trách nhiệm điều phối quá trình xác thực.
+
+Authentication Providers
+AuthenticationManager duyệt qua danh sách các AuthenticationProvider đã đăng ký. Mỗi provider kiểm tra xem nó có hỗ trợ loại Authentication này không.
+
+UserDetails Manager/Service
+Provider thích hợp (ví dụ DaoAuthenticationProvider) sẽ gọi UserDetailsService để tải thông tin người dùng từ nguồn dữ liệu (database, LDAP, …) dưới dạng UserDetails.
+
+Password Encoder
+Sử dụng PasswordEncoder để so sánh mật khẩu người dùng gửi lên với mật khẩu đã mã hóa trong UserDetails. Nếu khớp, xác thực thành công.
+
+Authentication Provider (hoàn tất xác thực)
+Provider tạo ra một đối tượng Authentication đã được xác thực (authenticated) và trả về cho AuthenticationManager.
+
+Security Context
+AuthenticationManager trả về Authentication đã xác thực cho filter ban đầu. Filter lưu đối tượng này vào SecurityContextHolder, giúp nó có thể được truy cập ở bất kỳ đâu trong ứng dụng.
+
+Spring Security filters
+Sau khi xác thực thành công, request tiếp tục đi qua các filter khác trong chuỗi (ví dụ: AuthorizationFilter, ExceptionTranslationFilter, …). Các filter này dựa vào SecurityContext để quyết định phân quyền hoặc xử lý lỗi.
+
+(Kết thúc)
+Request đến đích cuối cùng (controller, servlet) với thông tin xác thực đã được thiết lập.

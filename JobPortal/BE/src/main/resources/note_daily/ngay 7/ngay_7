@@ -1,0 +1,52 @@
+*Spring Authentication
+-Encoding và Encryption và Hasing
+1. Encoding:
+Bản chất: Là việc chuyển đổi dữ liệu từ định dạng này sang
+ định dạng khác để hệ thống (hoặc các thiết bị khác nhau) có thể đọc và hiểu được. Nó không liên quan đến bảo mật (cryptography).
+
+Tính chất: Hoàn toàn có thể đảo ngược lại (từ kết quả trả về dữ liệu gốc) mà không cần bất kỳ bí mật
+hay "chìa khóa" nào. Bất cứ ai biết thuật toán đều có thể dịch ngược lại được.
+
+Mục đích: Đảm bảo tính khả dụng của dữ liệu,
+không dùng để bảo vệ dữ liệu.
+
+Ví dụ (trong ảnh): ASCII, BASE64, UNICODE.
+💡 Ví dụ thực tế: Giống như việc bạn dịch một đoạn văn bản tiếng Việt sang mã Morse. Bất kỳ ai có bảng
+chữ cái Morse đều có thể dịch ngược lại để đọc được đoạn văn bản đó.
+
+2. Encryption (Mã hóa bảo mật)
+Bản chất: Là quá trình biến đổi dữ liệu thành một dạng không thể đọc được để đảm bảo tính bảo mật (confidentiality).
+ Người ngoài nhìn vào sẽ chỉ thấy một mớ ký tự lộn xộn.
+
+Tính chất: Cần có một "Chìa khóa" (Key). Để mã hóa cần khóa, và để giải mã (decryption - đưa dữ liệu lộn xộn về dạng ban đầu) cũng bắt
+buộc phải có khóa này. Dữ liệu chỉ an toàn chừng nào cái "chìa khóa" đó còn được giữ bí mật.
+
+Mục đích: Bảo vệ dữ liệu nhạy cảm khỏi những người không có quyền truy cập (ví dụ: tin nhắn cá nhân, thông tin thẻ tín dụng khi truyền trên mạng).
+
+💡 Ví dụ thực tế: Giống như bạn cất một bức thư vào két sắt và khóa lại. Chỉ người nào có đúng chiếc chìa khóa đó mới mở được két sắt ra để đọc thư.
+
+3. Hashing (Băm dữ liệu)
+Bản chất: Là việc đưa dữ liệu qua một hàm toán học (hàm băm) để tạo ra một chuỗi ký tự có độ dài cố định (gọi là hash value).
+
+Tính chất: Chỉ có một chiều (Non-reversible). Bạn không thể từ chuỗi kết quả (hash value) mà dịch ngược lại ra dữ liệu ban đầu.
+
+Mục đích: Dùng để xác minh (verification). Thay vì so sánh dữ liệu gốc, người ta sẽ băm dữ liệu mới đưa vào và
+so sánh kết quả băm đó với kết quả băm đã lưu trữ. Nếu hai kết quả băm khớp nhau, nghĩa là dữ liệu đầu vào giống nhau.
+
+💡 Ví dụ thực tế: Giống như việc lấy dấu vân tay của một người. Bạn không thể tái tạo lại hình dáng khuôn mặt của người đó chỉ
+từ dấu vân tay (tính một chiều), nhưng nếu bạn có dấu vân tay lưu trên chứng minh thư, bạn có thể đối chiếu để xác nhận xem người đang
+đứng trước mặt bạn có đúng là chủ nhân của chứng minh thư đó hay không.
+-------------------------------------------------------
+xây dựng token:
+tạo xác thực tùy chỉnh
+1. tạo api/login chứa User , jwt , xác thực
+2. Xây dựng authoritieManager
+3. Xây dựng jwtUtil và jwtTokenValidatorFiler rồi add filter ở filterChain
+Xây dựng đăng ký và phân quyền người dùng
+1.Tạo role: với id và name (Tên vai trò)
+2.Tạo users: người đăng ký có thuộc tính bắt buộc (email / usernamev..v.. và password)
+3. Xây dựng RegisterRequestDto Có trường email và password để nhận dữ liệu từ form người dùng nhập đến
+4. Xây dựng registerUser (api register) (Kiểm tra sự trùng lặp sử dụng các câu truy vấn để kiểm tra- tăng cường mật khẩu manghj)
+5. tự custome AuthenticationProvider xác thực
+
+-----------------------------
