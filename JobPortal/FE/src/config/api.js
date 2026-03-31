@@ -4,27 +4,15 @@
  */
 
 // Base URL for the backend API
-// Backend controllers are mounted under /api/v1
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8082/api/v1";
 
-// API Version Configuration
-// Default version sent in Accept header for all REST API calls
-// Format: application/vnd.eazyapp+json;v=1.0
-export const DEFAULT_API_VERSION = "1.0";
 
-// Supported API versions
-export const SUPPORTED_API_VERSIONS = ["1.0", "2.0", "3.0"];
-
-// Helper to generate Accept header value for a specific version
-export const getAcceptHeader = (version = DEFAULT_API_VERSION) =>
-  `application/vnd.eazyapp+json;v=${version}`;
 
 // API Endpoints
 export const API_ENDPOINTS = {
   // Company endpoints
   COMPANIES: "/companies/public",
-  COMPANY_BY_ID: (id) => `/companies/${id}/public`,
   COMPANIES_ADMIN: "/companies/admin",
   COMPANIES_CREATE_ADMIN: "/companies/admin",
   DELETE_COMPANY_BY_ID: (id) => `/companies/${id}/admin`,
@@ -48,9 +36,9 @@ export const API_ENDPOINTS = {
   // Contact endpoints
   CONTACTS: "/contacts/public",
   CONTACT_BY_ID: (id) => `/contacts/${id}`,
-  ADMIN_CONTACTS: "/contacts",
-  ADMIN_CONTACTS_SORT: "/contacts",
-  ADMIN_CONTACTS_PAGE: "/contacts",
+  ADMIN_CONTACTS: "/contacts/admin",
+  ADMIN_CONTACTS_SORT: "/contacts/sort/admin",
+  ADMIN_CONTACTS_PAGE: "/contacts/page/admin",
   UPDATE_CONTACT_STATUS: (id) => `/contacts/${id}/status/admin`,
 
   // CSRF token endpoint

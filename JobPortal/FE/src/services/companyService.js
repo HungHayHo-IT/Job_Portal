@@ -1,4 +1,4 @@
-import httpClient from "../config/httpClient";
+import httpClient, { withApiVersion } from "../config/httpClient";
 import { API_ENDPOINTS } from "../config/api";
 
 /**
@@ -106,16 +106,23 @@ export const fetchAllJobs = async () => {
  */
 export const fetchCompanyById = async (id) => {
   try {
-    // Current backend only exposes GET /companies/public.
-    // Fetch list then resolve by id on frontend.
-    const companies = await fetchCompanies();
-    const company = companies.find((item) => String(item.id) === String(id));
+    const response = await httpClient.get(API_ENDPOINTS.COMPANY_BY_ID(id));
+    const company = response.data;
 
-    if (!company) {
-      throw new Error("Company not found");
-    }
-
-    return company;
+    // Transform the backend data to match frontend structure
+    return {
+      id: company.id,
+      name: company.name,
+      logo: company.logo,
+      industry: company.industry,
+      size: company.size,
+      rating: company.rating,
+      locations: company.locations ? company.locations.split(",") : [],
+      founded: company.founded,
+      description: company.description,
+      employees: company.employees,
+      website: company.website,
+    };
   } catch (error) {
     console.error("Error fetching company:", error);
     throw error;

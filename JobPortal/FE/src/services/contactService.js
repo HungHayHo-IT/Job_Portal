@@ -15,18 +15,7 @@ import { API_ENDPOINTS } from '../config/api';
  */
 export const submitContactForm = async (contactData) => {
   try {
-    const userTypeMap = {
-      jobseeker: "Job Seeker",
-      employer: "Employer",
-      other: "Other",
-    };
-
-    const payload = {
-      ...contactData,
-      userType: userTypeMap[contactData.userType] || "Other",
-    };
-
-    const response = await httpClient.post(API_ENDPOINTS.CONTACTS, payload);
+    const response = await httpClient.post(API_ENDPOINTS.CONTACTS, contactData);
     return response.data;
   } catch (error) {
     console.error('Error submitting contact form:', error);
@@ -65,9 +54,7 @@ export const submitContactForm = async (contactData) => {
  */
 export const fetchAllContacts = async () => {
   try {
-    const response = await httpClient.get(API_ENDPOINTS.ADMIN_CONTACTS, {
-      params: { status: "OPEN" },
-    });
+    const response = await httpClient.get(API_ENDPOINTS.CONTACTS);
     return response.data;
   } catch (error) {
     console.error('Error fetching contacts:', error);
@@ -87,9 +74,8 @@ export const fetchOpenContactMsgsWithSort = async (sortBy = 'createdAt', sortDir
   try {
     const response = await httpClient.get(API_ENDPOINTS.ADMIN_CONTACTS_SORT, {
       params: {
-        status: "OPEN",
         sortBy,
-        sortDir,
+        sortDir
       }
     });
     return response.data;
@@ -118,7 +104,6 @@ export const fetchOpenContactMsgsWithPaginationAndSort = async (
   try {
     const response = await httpClient.get(API_ENDPOINTS.ADMIN_CONTACTS_PAGE, {
       params: {
-        status: "OPEN",
         pageNumber,
         pageSize,
         sortBy,

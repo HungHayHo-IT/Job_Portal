@@ -165,7 +165,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = async (email, password) => {
+  const login = async (email, password, userType) => {
     setIsLoading(true);
 
     try {
@@ -175,12 +175,11 @@ export const AuthProvider = ({ children }) => {
         password: password,
       });
 
-      // Backend returns: { message, userDto, jwt }
-      if (response.data && response.data.jwt) {
-        const { jwt, userDto: userData } = response.data;
+      if (response.data && response.data.jwtToken) {
+        const { jwtToken, user: userData, message } = response.data;
 
         // Store JWT token in localStorage
-        localStorage.setItem("authToken", jwt);
+        localStorage.setItem("authToken", jwtToken);
 
         // Create user object with role from backend
         // Backend UserDto contains: userId, name, email, mobileNumber, role
@@ -222,7 +221,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false);
         return { success: true, user: userWithRole };
       } else {
-        console.error("[Auth] Invalid response - missing jwt");
+        console.error("[Auth] Invalid response - missing jwtToken");
         setIsLoading(false);
         return { success: false, error: "Invalid response from server" };
       }
