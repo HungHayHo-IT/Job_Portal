@@ -78,19 +78,7 @@ public class AuthController {
     @PostMapping("/register/public")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequestDto registerRequestDto) {
 
-        Optional<JobPortalUser> existingUser = jobPortalUserRepository.readUserByEmailOrMobileNumber
-                (registerRequestDto.email(), registerRequestDto.mobileNumber());
-        if (existingUser.isPresent()) {
-            Map<String, String> errors = new HashMap<>();
-            JobPortalUser jobPortalUser = existingUser.get();
-            if (jobPortalUser.getEmail().equalsIgnoreCase(registerRequestDto.email())) {
-                errors.put("email", "Email is already registered");
-            }
-            if (jobPortalUser.getMobileNumber().equals(registerRequestDto.mobileNumber())) {
-                errors.put("mobileNumber", "Mobile number is already registered");
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        }
+
         JobPortalUser jobPortalUser = new JobPortalUser();
         BeanUtils.copyProperties(registerRequestDto, jobPortalUser);
         jobPortalUser.setPasswordHash(passwordEncoder.encode(registerRequestDto.password()));

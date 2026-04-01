@@ -42,6 +42,8 @@ public class JobPortalSecurityConfig {
                 .authorizeHttpRequests(requests-> {
                     PathConfig.publicPath().forEach(path -> requests.requestMatchers(path).permitAll());
                     PathConfig.securePath().forEach(path -> requests.requestMatchers(path).authenticated());
+                    PathConfig.adminPaths().forEach(path->requests.requestMatchers(path).hasRole("ADMIN"));
+                    requests.anyRequest().denyAll();
                 })
                 .addFilterBefore(new JwtTokenValidatorFilter(PathConfig.publicPath()), BasicAuthenticationFilter.class);
 

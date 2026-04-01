@@ -1,5 +1,6 @@
 package com.example.BE.company.service.impl;
 
+import com.example.BE.constants.ApplicationConstants;
 import com.example.BE.dto.CompanyDto;
 import com.example.BE.dto.JobDto;
 import com.example.BE.entity.Company;
@@ -22,7 +23,7 @@ public class ICompanyServiceImpl implements ICompanyService
 
     @Override
     public List<CompanyDto> getAllCompanies() {
-        List<Company> companyList =companyRepository.findAll();
+        List<Company> companyList =companyRepository.findAllWithJobsByStatus(ApplicationConstants.ACTIVE_STATUS);
         return companyList.stream().map(
                 company -> transformToDto(company)
         ).collect(Collectors.toList());
