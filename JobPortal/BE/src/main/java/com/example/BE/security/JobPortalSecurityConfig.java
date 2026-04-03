@@ -1,6 +1,7 @@
 package com.example.BE.security;
 
 import com.example.BE.security.filter.JwtTokenValidatorFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,10 +42,26 @@ public class JobPortalSecurityConfig {
                 .cors(corsConfig->corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests-> {
                     PathConfig.publicPath().forEach(path -> requests.requestMatchers(path).permitAll());
-                    PathConfig.securePath().forEach(path -> requests.requestMatchers(path).authenticated());
                     PathConfig.adminPaths().forEach(path->requests.requestMatchers(path).hasRole("ADMIN"));
+                    PathConfig.securePath().forEach(path -> requests.requestMatchers(path).authenticated());
+
                 })
-                .addFilterBefore(new JwtTokenValidatorFilter(PathConfig.publicPath()), BasicAuthenticationFilter.class);
+
+                .addFilterBefore(new JwtTokenValidatorFilter(PathConfig.publicPath()), BasicAuthenticationFilter.class)
+                .exceptionHandling(
+                        exception->exception
+                                .accessDeniedHandler(((request, response, accessDeniedException) -> {
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.setContentType("application/json");
+                                    response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \"You don't have permission to access this resource\"}");
+                                }))
+                                .authenticationEntryPoint(((request, response, authException) -> {
+                                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    response.setContentType("application/json");
+                                    response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \"You don't have permission to access this resource\"}");
+                                }))
+                );
+
 
         httpSecurity.formLogin(flc->flc.disable());
         httpSecurity.httpBasic(withDefaults());

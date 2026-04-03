@@ -8,6 +8,10 @@ import com.example.BE.entity.Contact;
 import com.example.BE.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -39,6 +43,48 @@ public class ContactServiceImpl implements IContactService {
                 .map(this::transformToDto)
                 .collect(Collectors.toList());
         return responseDtos;
+    }
+
+    @Override
+    public List<ContactResponseDto> fetchNewContactMsgsWithSort(String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+
+        List<Contact> contacts = contactRepository.findContactsByStatus(ApplicationConstants.NEW_MESSAGE,sort);
+
+        List<ContactResponseDto> contactResponseDtos = contacts.stream()
+                .map(
+                        contact -> transformToDto(contact)
+                ).collect(Collectors.toList());
+        return contactResponseDtos;
+    }
+
+    @Override
+    public Page<ContactResponseDto> fetchNewContactMsgsWithPaginationAndSort(
+            int pageNumber, int pageSize, String sortBy, String sortDir) {
+        // Create Sort object based on sortBy and sortDir parameters
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        // Create Pageable object with page number, page size, and sorting
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        // Fetch paginated and sorted contacts from repository
+        Page<Contact> contactPage = (Page<Contact>) contactRepository.findContactsByStatus(ApplicationConstants.NEW_MESSAGE,pageable);
+
+        // Transform Contact entities to ContactResponseDto
+        Page<ContactResponseDto> responseDtoPage = contactPage.map(this::transformToDto);
+        return responseDtoPage;
+    }
+
+    @Override
+    public boolean closeContactMsg(Long id, String status) {
+        Contact contact = contactRepository.findById(id).orElse(null);
+        if (contact == null) {
+            return false;
+        } else {
+            contact.setStatus(status);
+            contactRepository.save(contact);
+        }
+        return true;
     }
 
 
