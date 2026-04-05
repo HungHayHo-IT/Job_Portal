@@ -1,9 +1,12 @@
 package com.example.BE.repository;
 
 import com.example.BE.entity.Contact;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,5 +17,9 @@ public interface ContactRepository extends JpaRepository<Contact,Long> {
 
     List<Contact> findContactsByStatus(String status, Sort sort);
 
-    List<Contact> findContactsByStatus(String status, Pageable pageable);
+    Page<Contact> findContactsByStatus(String status, Pageable pageable);
+
+    @Modifying(flushAutomatically = true,clearAutomatically = true)
+    int updateStatusById(@Param("status") String status, @Param("id") Long id,
+                         @Param("updatedBy") String updatedBy);
 }

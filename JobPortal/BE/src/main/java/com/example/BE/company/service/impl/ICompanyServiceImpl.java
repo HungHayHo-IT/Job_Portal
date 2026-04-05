@@ -8,13 +8,16 @@ import com.example.BE.entity.Job;
 import com.example.BE.repository.CompanyRepository;
 import com.example.BE.company.service.ICompanyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ICompanyServiceImpl implements ICompanyService
 {
     private final CompanyRepository companyRepository;
@@ -25,21 +28,64 @@ public class ICompanyServiceImpl implements ICompanyService
     public List<CompanyDto> getAllCompanies() {
         List<Company> companyList =companyRepository.findAllWithJobsByStatus(ApplicationConstants.ACTIVE_STATUS);
         return companyList.stream().map(
-                company -> transformToDto(company)
+                company -> transformCompanyToDto(company)
         ).collect(Collectors.toList());
     }
 
+    @Override
+    public List<CompanyDto> getAllCompaniesForAdmin() {
+        List<Company> companyList = companyRepository.findAll();
+        return companyList.stream().map(
+                company -> transformCompanyToDtoForAdmin(company)
+        ).collect(Collectors.toList());
+    }
 
+    @Transactional
+    @Override
+    public boolean createCompany(CompanyDto companyDto) {
+        Company company = transformCompanyDtoToEntity(companyDto);
+        Company savedCompany = companyRepository.save(company);
+        return savedCompany.getId() != null && savedCompany.getId() > 0;
+    }
+
+    @Transactional
+    @Override
+    public boolean updateCompanyDetails(Long id, CompanyDto companyDto) {
+        int updateCompany = companyRepository.updateCompanyDetails(
+                id,companyDto.name(),companyDto.logo(),
+                companyDto.industry(),companyDto.size(),companyDto.rating(),
+                companyDto.locations(),companyDto.founded(),companyDto.description(),
+                companyDto.employees(),companyDto.website()
+        );
+        return updateCompany>0;
+    }
+
+    @Transactional
+    @Override
+    public void deleteCompanyById(Long id) {
+        companyRepository.deleteById(id);
+    }
+
+
+    private CompanyDto transformCompanyToDto(Company company) {
+        List<JobDto> jobDtos = company.getJobs().stream()
+                .map(this::transFormJobToDto)
+                .collect(Collectors.toList());
+        return new CompanyDto(company.getId(), company.getName(), company.getLogo(),
+                company.getIndustry(), company.getSize(), company.getRating(),
+                company.getLocations(), company.getFounded(), company.getDescription(),
+                company.getEmployees(), company.getWebsite(), company.getCreatedAt(),jobDtos);
+    }
     private CompanyDto transformToDto(Company company) {
         List<JobDto> listJob = company.getJobs().stream().map(
-                job -> tramsFormtJobToDto(job)
+                job -> transFormJobToDto(job)
         ).collect(Collectors.toList());
         return new CompanyDto(company.getId(), company.getName(), company.getLogo(),
                 company.getIndustry(), company.getSize(), company.getRating(),
                 company.getLocations(), company.getFounded(), company.getDescription(),
                 company.getEmployees(), company.getWebsite(), company.getCreatedAt(),listJob);
     }
-    private JobDto tramsFormtJobToDto(Job job){
+    private JobDto transFormJobToDto(Job job){
         return new JobDto(
                 job.getId(),
                 job.getTitle(),
@@ -67,4 +113,17 @@ public class ICompanyServiceImpl implements ICompanyService
                 job.getStatus()
         );
     }
+    private CompanyDto transformCompanyToDtoForAdmin(Company company) {
+        return new CompanyDto(company.getId(), company.getName(), company.getLogo(),
+                company.getIndustry(), company.getSize(), company.getRating(),
+                company.getLocations(), company.getFounded(), company.getDescription(),
+                company.getEmployees(), company.getWebsite(), company.getCreatedAt(),null);
+    }
+
+    private Company transformCompanyDtoToEntity(CompanyDto companyDto) {
+        Company company = new Company();
+        BeanUtils.copyProperties(companyDto, company);
+        return company;
+    }
+
 }
