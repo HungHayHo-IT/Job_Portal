@@ -37,9 +37,9 @@ const DUMMY_USERS = {
       skills: ["JavaScript", "React", "Node.js", "Python", "AWS"],
       experience: "5 years",
       portfolio: "https://alexbrown.dev",
-      profileImage: null, // Will be set when user uploads
+      profileImage: null,
       resume:
-        "data:application/pdf;base64,JVBERi0xLjcKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFsgMyAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJveCBbIDAgMCA2MTIgNzkyIF0KL0NvbnRlbnRzIDQgMCBSCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCi9GMSAyNCBUZgoxMDAgNzAwIFRkCihTYW1wbGUgUmVzdW1lKSBUagpFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA1CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDIxMCAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDUKL1Jvb3QgMSAwIFIKPj4Kc3RhcnR4cmVmCjMwNQolJUVPRgo=", // Sample PDF for testing
+        "data:application/pdf;base64,JVBERi0xLjcKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFsgMyAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJveCBbIDAgMCA2MTIgNzkyIF0KL0NvbnRlbnRzIDQgMCBSCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9MZW5ndGggNDQKPj4Kc3RyZWFtCkJUCi9GMSAyNCBUZgoxMDAgNzAwIFRkCihTYW1wbGUgUmVzdW1lKSBUagpFVAplbmRzdHJlYW0KZW5kb2JqCnhyZWYKMCA1CjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDAwOSAwMDAwMCBuIAowMDAwMDAwMDU4IDAwMDAwIG4gCjAwMDAwMDAxMTUgMDAwMDAgbiAKMDAwMDAwMDIxMCAwMDAwMCBuIAp0cmFpbGVyCjw8Ci9TaXplIDUKL1Jvb3QgMSAwIFIKPj4Kc3RhcnR4cmVmCjMwNQolJUVPRgo=",
       workHistory: [
         {
           id: 1,
@@ -61,7 +61,7 @@ const DUMMY_USERS = {
           description: "Focused on software engineering and web technologies",
         },
       ],
-      profileComplete: true, // For testing
+      profileComplete: true,
       role: "jobSeeker",
     },
     {
@@ -82,8 +82,8 @@ const DUMMY_USERS = {
       ],
       experience: "7 years",
       portfolio: "https://emma-davis.com",
-      profileImage: null, // Will be set when user uploads
-      resume: null, // Will be set when user uploads
+      profileImage: null,
+      resume: null,
       workHistory: [
         {
           id: 1,
@@ -106,7 +106,7 @@ const DUMMY_USERS = {
             "Specialized in technology management and product development",
         },
       ],
-      profileComplete: true, // For testing
+      profileComplete: true,
       role: "jobSeeker",
     },
   ],
@@ -134,7 +134,6 @@ export const AuthProvider = ({ children }) => {
         const parsedUser = JSON.parse(savedUser);
 
         // MIGRATION: Check if email field looks like it contains a name instead of email
-        // This fixes old cached data from before the bug was fixed
         if (parsedUser.email && !parsedUser.email.includes("@")) {
           console.warn(
             "[Auth] Detected invalid cached user data. Clearing localStorage..."
@@ -175,20 +174,19 @@ export const AuthProvider = ({ children }) => {
         password: password,
       });
 
-      if (response.data && response.data.jwtToken) {
-        const { jwtToken, user: userData, message } = response.data;
+      // Kiểm tra chính xác biến 'jwt' trả về từ Backend
+      if (response.data && response.data.jwt) {
+        const { jwt: jwtToken, userDto: userData, message } = response.data;
 
         // Store JWT token in localStorage
         localStorage.setItem("authToken", jwtToken);
 
         // Create user object with role from backend
-        // Backend UserDto contains: userId, name, email, mobileNumber, role
-        // Role values from backend: ROLE_JOB_SEEKER, ROLE_EMPLOYER, ROLE_ADMIN
         const userWithRole = {
           ...userData,
           phone: userData.mobileNumber, // Map mobileNumber to phone for frontend consistency
-          role: userData.role, // Use the role from the backend (ROLE_JOB_SEEKER, ROLE_EMPLOYER, ROLE_ADMIN)
-          profileComplete: false, // Default to false, will be checked for job seekers
+          role: userData.role, // ROLE_JOB_SEEKER, ROLE_EMPLOYER, ROLE_ADMIN
+          profileComplete: userData.role !== "ROLE_JOB_SEEKER", // Mặc định true cho Admin/Employer
         };
 
         // For job seekers, check if profile is complete
@@ -210,18 +208,14 @@ export const AuthProvider = ({ children }) => {
             userWithRole.profileComplete = isComplete;
           } catch (error) {
             console.error("[Auth] Error checking profile completeness:", error);
-            // If error, keep profileComplete as false
           }
-        } else {
-          // Employers don't need profile completion
-          userWithRole.profileComplete = true;
         }
 
         setUser(userWithRole);
         setIsLoading(false);
         return { success: true, user: userWithRole };
       } else {
-        console.error("[Auth] Invalid response - missing jwtToken");
+        console.error("[Auth] Invalid response - missing jwt");
         setIsLoading(false);
         return { success: false, error: "Invalid response from server" };
       }
@@ -268,7 +262,6 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
 
     try {
-      // Call backend registration API
       const response = await httpClient.post(API_ENDPOINTS.REGISTER, {
         name: userData.name,
         email: userData.email,
@@ -276,10 +269,8 @@ export const AuthProvider = ({ children }) => {
         password: userData.password,
       });
 
-      // Registration successful
       setIsLoading(false);
 
-      // Backend returns "Registration successful" as plain text or object
       const successMessage =
         typeof response.data === "string"
           ? response.data
@@ -296,24 +287,20 @@ export const AuthProvider = ({ children }) => {
       console.error("[Auth] Registration error:", error);
 
       if (error.response) {
-        // Server responded with error
         console.error("[Auth] Server error:", {
           status: error.response.status,
           data: error.response.data,
         });
 
-        // Check if response contains field-specific errors (from backend validation)
         const errorData = error.response.data;
 
-        // If it's an object with field names, it's field-specific validation errors
         if (errorData && typeof errorData === "object" && !errorData.message) {
           return {
             success: false,
-            fieldErrors: errorData, // {email: "...", mobileNumber: "...", password: "..."}
+            fieldErrors: errorData,
           };
         }
 
-        // Otherwise, it's a general error message
         const errorMessage =
           errorData?.message ||
           errorData?.error ||
@@ -325,7 +312,6 @@ export const AuthProvider = ({ children }) => {
           error: errorMessage,
         };
       } else if (error.request) {
-        // Request was made but no response received
         console.error("[Auth] No response from server");
         return {
           success: false,
@@ -333,7 +319,6 @@ export const AuthProvider = ({ children }) => {
             "Cannot connect to server. Please check if backend is running on http://localhost:8080",
         };
       } else {
-        // Something else happened
         console.error("[Auth] Unexpected error:", error.message);
         return {
           success: false,
@@ -351,18 +336,15 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
 
     try {
-      // Simulate API call delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Update user data
       const updatedUser = {
         ...user,
         ...profileData,
         updatedAt: new Date().toISOString(),
       };
 
-      // Update in dummy data
-      if (user.role === "employer") {
+      if (user.role === "ROLE_EMPLOYER") {
         const userIndex = DUMMY_USERS.employers.findIndex(
           (u) => u.id === user.id
         );
