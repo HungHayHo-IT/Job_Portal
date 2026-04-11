@@ -19,7 +19,9 @@ public class PathConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html",
-                "/webjars/**"
+                "/webjars/**",
+                "/actuator/**",
+                "/todos/**"
         );
     }
     @Bean
@@ -29,6 +31,34 @@ public class PathConfig {
                 "/api/**"
         );
     }
+    @Bean(name = "employerPaths")
+    public static List<String> employerPaths() {
+        return List.of(
+                "/api/v1/jobs/employer",
+                "/api/v1/jobs/${jobId}/status/employer",
+                "/api/v1/jobs/applications/{jobId}/employer",
+                "/api/v1/jobs/applications/employer"
+        );
+    }
+
+    @Bean(name = "jobseekerPaths")
+    public static List<String> jobseekerPaths() {
+        return List.of(
+                "/api/v1/users/profile/jobseeker",
+                "/api/v1/users/profile/picture/jobseeker",
+                "/api/v1/users/profile/resume/jobseeker",
+                "/api/v1/users/saved-jobs/${jobId}/jobseeker",
+                "/api/v1/users/saved-jobs/jobseeker",
+                "/api/v1/users/job-applications/jobseeker",
+                "/api/v1/users/job-applications/${jobId}/jobseeker",
+                "/api/v1/users/saved-jobs/{jobId}/jobseeker",
+                "/api/v1/users/saved-jobs/jobseeker",
+                "/api/v1/users/job-applications/jobseeker",
+                "/api/v1/users/job-applications/{jobId}/jobseeker",
+                "/api/v1/users/job-applications/jobseeker"
+        );
+    }
+
 
     @Bean(name = "adminPaths")
     public static List<String> adminPaths(){

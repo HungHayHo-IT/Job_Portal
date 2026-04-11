@@ -1,4 +1,4 @@
-package com.example.BE.config;
+package com.example.BE.otel;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.OpenTelemetry;

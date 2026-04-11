@@ -1,7 +1,9 @@
 package com.example.BE.security;
 
 import com.example.BE.security.filter.JwtTokenValidatorFilter;
+import com.example.BE.security.util.CorsProperties;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,18 +33,23 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class JobPortalSecurityConfig {
+
+    private final CorsProperties corsProperties;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf(csrf->csrf
+                .csrf(csrf->csrf.ignoringRequestMatchers("/actuator/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
                 .cors(corsConfig->corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests-> {
                     PathConfig.publicPath().forEach(path -> requests.requestMatchers(path).permitAll());
                     PathConfig.adminPaths().forEach(path->requests.requestMatchers(path).hasRole("ADMIN"));
+                    PathConfig.employerPaths().forEach(path->requests.requestMatchers(path).hasRole("EMPLOYER"));
+                    PathConfig.jobseekerPaths() .forEach(path->requests.requestMatchers(path).hasRole("JOB_SEEKER"));
                     PathConfig.securePath().forEach(path -> requests.requestMatchers(path).authenticated());
 
                 })
@@ -72,11 +79,11 @@ public class JobPortalSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-        config.setAllowedMethods(Collections.singletonList("*"));
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        config.setAllowCredentials(true);
-        config.setMaxAge(3600L);
+        config.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        config.setAllowedMethods(corsProperties.getAllowedMethods());
+        config.setAllowedHeaders(corsProperties.getAllowedHeaders());
+        config.setAllowCredentials(corsProperties.getAllowCredentials());
+        config.setMaxAge(corsProperties.getMaxAge());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
