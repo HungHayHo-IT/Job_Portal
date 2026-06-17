@@ -5,9 +5,8 @@
 
 // Base URL for the backend API
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8082/api/v1";
-
-
+  import.meta.env.VITE_API_BASE_URL ||
+  "https://job-portal-backend-w1y8.onrender.com/api/v1";
 
 // API Endpoints
 export const API_ENDPOINTS = {
