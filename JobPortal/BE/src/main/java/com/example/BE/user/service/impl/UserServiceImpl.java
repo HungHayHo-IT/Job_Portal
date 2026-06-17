@@ -4,6 +4,7 @@ import com.example.BE.constants.ApplicationConstants;
 import com.example.BE.dto.*;
 import com.example.BE.entity.*;
 import com.example.BE.repository.*;
+import com.example.BE.user.mapper.UserMapper;
 import com.example.BE.user.service.IUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements IUserService {
 
+    private final UserMapper userMapper;
     private final JobPortalUserRepository jobPortalUserRepository;
     private final RoleRepository roleRepository;
     private final CompanyRepository companyRepository;
@@ -33,7 +35,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Optional<UserDto> searchUserByEmail(String email) {
         return jobPortalUserRepository.findJobPortalUserByEmail(email).map(
-                user -> mapToUserDto(user)
+                user -> userMapper.mapToUserDto(user)
         );
     }
 
@@ -45,7 +47,7 @@ public class UserServiceImpl implements IUserService {
         );
 
         if(ApplicationConstants.ROLE_EMPLOYER.equals(jobPortalUser.getRole().getName())){
-            return mapToUserDto(jobPortalUser);
+            return userMapper.mapToUserDto(jobPortalUser);
         }
 
         if(ApplicationConstants.ROLE_ADMIN.equals(jobPortalUser.getRole().getName())){
@@ -58,7 +60,7 @@ public class UserServiceImpl implements IUserService {
 
         jobPortalUser.setRole(roleEmployer);
 
-        return mapToUserDto(jobPortalUser);
+        return userMapper.mapToUserDto(jobPortalUser);
     }
 
     @Transactional
@@ -71,7 +73,7 @@ public class UserServiceImpl implements IUserService {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Company not found with ID: " + companyId));
         user.setCompany(company);
-        return mapToUserDto(user);
+        return userMapper.mapToUserDto(user);
     }
 
     @Transactional
@@ -88,8 +90,8 @@ public class UserServiceImpl implements IUserService {
         ObjectMapper objectMapper = new ObjectMapper();//ObjectMapper của Jackson dùng để chuyển chuỗi JSON thành object ProfileDto.
         // Parse JSON string to ProfileDto
         ProfileDto profileDto = objectMapper.readValue(profileJson, ProfileDto.class);
-        Profile savedProfile = profileRepository.save(mapToProfile(profile, profileDto, profilePicture, resume));
-        return mapToProfileDto(savedProfile, false);
+        Profile savedProfile = profileRepository.save(userMapper.mapToProfile(profile, profileDto, profilePicture, resume));
+        return userMapper.mapToProfileDto(savedProfile, false);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class UserServiceImpl implements IUserService {
         if (user.getProfile() == null) {
             return null;
         }
-        return mapToProfileDto(user.getProfile(), false);
+        return userMapper.mapToProfileDto(user.getProfile(), false);
     }
 
     @Override
@@ -109,7 +111,7 @@ public class UserServiceImpl implements IUserService {
         if (user.getProfile() == null) {
             return null;
         }
-        return mapToProfileDto(user.getProfile(), true);
+        return userMapper.mapToProfileDto(user.getProfile(), true);
     }
 
     @Override
@@ -119,7 +121,7 @@ public class UserServiceImpl implements IUserService {
         if (user.getProfile() == null) {
             return null;
         }
-        return mapToProfileDto(user.getProfile(), true);
+        return userMapper.mapToProfileDto(user.getProfile(), true);
     }
 
     @Transactional
@@ -131,7 +133,7 @@ public class UserServiceImpl implements IUserService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job not found with ID: " + jobId));
         user.getSavedJobs().add(job);
-        return transformJobToDto(job);
+        return userMapper.transformJobToDto(job);
     }
 
     @Transactional
@@ -151,7 +153,7 @@ public class UserServiceImpl implements IUserService {
         // Validate if user exists
         JobPortalUser user = jobPortalUserRepository.findJobPortalUserByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
-        return user.getSavedJobs().stream().map(job -> transformJobToDto(job))
+        return user.getSavedJobs().stream().map(job -> userMapper.transformJobToDto(job))
                 .collect(Collectors.toList());
     }
 
@@ -179,7 +181,7 @@ public class UserServiceImpl implements IUserService {
         // Increment applications count
         job.setApplicationsCount(job.getApplicationsCount() != null ? job.getApplicationsCount() + 1 : 1);
         // jobRepository.save(job); - Optional
-        return mapToJobApplicationDto(saved);
+        return userMapper.mapToJobApplicationDto(saved);
     }
 
     @Transactional
@@ -208,136 +210,13 @@ public class UserServiceImpl implements IUserService {
         // Validate if user exists
         JobPortalUser user = jobPortalUserRepository.findJobPortalUserByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
-        return user.getJobApplications().stream().map(this::mapToJobApplicationDto)
+        return user.getJobApplications().stream().map(
+                application -> userMapper.mapToJobApplicationDto(application)
+                )
                 .collect(Collectors.toList());
     }
 
 
-    private UserDto mapToUserDto(JobPortalUser user) {
-        UserDto dto = new UserDto();
-        BeanUtils.copyProperties(user, dto);
-        dto.setUserId(user.getId());
-        dto.setRole(user.getRole() != null ? user.getRole().getName() : null);
-        dto.setCompanyId(user.getCompany() != null ? user.getCompany().getId() : null);
-        dto.setCompanyName(user.getCompany() != null ? user.getCompany().getName() : null);
-        return dto;
-    }
 
-    private Profile mapToProfile(Profile profile, ProfileDto profileDto,
-                                 MultipartFile profilePicture, MultipartFile resume) {
-        // Update text fields
-        profile.setJobTitle(profileDto.jobTitle());
-        profile.setLocation(profileDto.location());
-        profile.setExperienceLevel(profileDto.experienceLevel());
-        profile.setProfessionalBio(profileDto.professionalBio());
-        profile.setPortfolioWebsite(profileDto.portfolioWebsite());
-        // Handle profile picture upload
-        if (profilePicture != null && !profilePicture.isEmpty()) {
-            try {
-                profile.setProfilePicture(profilePicture.getBytes());
-                profile.setProfilePictureName(profilePicture.getOriginalFilename());
-                profile.setProfilePictureType(profilePicture.getContentType());
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload profile picture", e);
-            }
-        }
-        // Handle resume upload
-        if (resume != null && !resume.isEmpty()) {
-            try {
-                profile.setResume(resume.getBytes());
-                profile.setResumeName(resume.getOriginalFilename());
-                profile.setResumeType(resume.getContentType());
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload resume", e);
-            }
-        }
-        return profile;
-    }
-
-    private ProfileDto mapToProfileDto(Profile profile, boolean includeBinaryData) {
-        ProfileDto dto;
-        if (includeBinaryData) {
-            dto = new ProfileDto(profile.getId(), profile.getUser().getId(),
-                    profile.getJobTitle(), profile.getLocation(), profile.getExperienceLevel(),
-                    profile.getProfessionalBio(), profile.getPortfolioWebsite(), profile.getProfilePicture(),
-                    profile.getProfilePictureName(), profile.getProfilePictureType(), profile.getResume(),
-                    profile.getResumeName(), profile.getResumeType(), profile.getCreatedAt(), profile.getUpdatedAt()
-            );
-        } else {
-            dto = new ProfileDto(profile.getId(), profile.getUser().getId(),
-                    profile.getJobTitle(), profile.getLocation(), profile.getExperienceLevel(),
-                    profile.getProfessionalBio(), profile.getPortfolioWebsite(), null,
-                    profile.getProfilePictureName(), profile.getProfilePictureType(), null,
-                    profile.getResumeName(), profile.getResumeType(), profile.getCreatedAt(), profile.getUpdatedAt());
-        }
-        return dto;
-    }
-
-    private JobDto transformJobToDto(Job job) {
-        return new JobDto(
-                job.getId(),
-                job.getTitle(),
-                job.getCompany().getId(),
-                job.getCompany().getName(),
-                job.getCompany().getLogo(),
-                job.getLocation(),
-                job.getWorkType(),
-                job.getJobType(),
-                job.getCategory(),
-                job.getExperienceLevel(),
-                job.getSalaryMin(),
-                job.getSalaryMax(),
-                job.getSalaryCurrency(),
-                job.getSalaryPeriod(),
-                job.getDescription(),
-                job.getRequirements(),
-                job.getBenefits(),
-                job.getPostedDate(),
-                job.getApplicationDeadline(),
-                job.getApplicationsCount(),
-                job.getFeatured(),
-                job.getUrgent(),
-                job.getRemote(),
-                job.getStatus()
-        );
-    }
-
-    private JobApplicationDto mapToJobApplicationDto(JobApplication application) {
-        // Map profile if exists
-        ProfileDto profileDto = null;
-        Profile profile = application.getUser().getProfile();
-        if (profile != null) {
-            profileDto = new ProfileDto(
-                    profile.getId(),
-                    profile.getUser().getId(),
-                    profile.getJobTitle(),
-                    profile.getLocation(),
-                    profile.getExperienceLevel(),
-                    profile.getProfessionalBio(),
-                    profile.getPortfolioWebsite(),
-                    profile.getProfilePicture(),
-                    profile.getProfilePictureName(),
-                    profile.getProfilePictureType(),
-                    profile.getResume(),
-                    profile.getResumeName(),
-                    profile.getResumeType(),
-                    profile.getCreatedAt(),
-                    profile.getUpdatedAt()
-            );
-        }
-        return new JobApplicationDto(
-                application.getId(),
-                application.getUser().getId(),
-                application.getUser().getName(),
-                application.getUser().getEmail(),
-                application.getUser().getMobileNumber(),
-                profileDto,
-                transformJobToDto(application.getJob()),
-                application.getAppliedAt(),
-                application.getStatus(),
-                application.getCoverLetter(),
-                application.getNotes()
-        );
-    }
 
 }

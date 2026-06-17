@@ -1,6 +1,7 @@
 package com.example.BE.contact.service.impl;
 
 import com.example.BE.constants.ApplicationConstants;
+import com.example.BE.contact.mapper.ContactMapper;
 import com.example.BE.contact.service.IContactService;
 import com.example.BE.dto.ContactRequestDto;
 import com.example.BE.dto.ContactResponseDto;
@@ -25,14 +26,14 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ContactServiceImpl implements IContactService {
 
-
+    private final ContactMapper contactMapper;
     private final ContactRepository contactRepository;
 
     @Transactional
     @Override
     public boolean saveContact(ContactRequestDto contactRequestDto) {
         boolean result = false;
-        Contact contact = contactRepository.save(transformToEntity(contactRequestDto));
+        Contact contact = contactRepository.save(contactMapper.transformToEntity(contactRequestDto));
         if(contact!=null && contact.getId()!=null){
             result = true;
         }
@@ -44,7 +45,9 @@ public class ContactServiceImpl implements IContactService {
         List<Contact> contacts = contactRepository.findContactsByStatus(ApplicationConstants.NEW_MESSAGE);
 
         List<ContactResponseDto> responseDtos = contacts.stream()
-                .map(this::transformToDto)
+                .map(
+                        contact ->contactMapper.transformToDto(contact)
+                )
                 .collect(Collectors.toList());
         return responseDtos;
     }
@@ -57,7 +60,7 @@ public class ContactServiceImpl implements IContactService {
 
         List<ContactResponseDto> contactResponseDtos = contacts.stream()
                 .map(
-                        contact -> transformToDto(contact)
+                        contact -> contactMapper.transformToDto(contact)
                 ).collect(Collectors.toList());
         return contactResponseDtos;
     }
@@ -75,7 +78,9 @@ public class ContactServiceImpl implements IContactService {
         // SỬA DÒNG NÀY: Xóa bỏ đoạn ép kiểu (Page<Contact>)
         Page<Contact> contactPage = contactRepository.findContactsByStatus(ApplicationConstants.NEW_MESSAGE, pageable);
 
-        Page<ContactResponseDto> responseDtoPage = contactPage.map(this::transformToDto);
+        Page<ContactResponseDto> responseDtoPage = contactPage.map(
+                contact -> contactMapper.transformToDto(contact)
+        );
         return responseDtoPage;
     }
 
@@ -88,19 +93,5 @@ public class ContactServiceImpl implements IContactService {
     }
 
 
-    public Contact transformToEntity(ContactRequestDto contactRequestDto){
-        Contact contact = new Contact();
-        BeanUtils.copyProperties(contactRequestDto,contact);
-        contact.setCreatedAt(Instant.now());
-        contact.setCreatedBy("System");
-        contact.setStatus("NEW");
-        return contact;
-    }
 
-    private ContactResponseDto transformToDto(Contact contact) {
-        ContactResponseDto contactResponseDto = new ContactResponseDto(contact.getId(),
-                contact.getName(), contact.getEmail(), contact.getUserType(), contact.getSubject(),
-                contact.getMessage(), contact.getStatus(), contact.getCreatedAt());
-        return contactResponseDto;
-    }
 }

@@ -1,0 +1,64 @@
+services:
+  # CSDL MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: job_portal_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: job_portal
+    ports:
+      - "3308:3306" 
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # Cấu hình kiểm tra sức khỏe của database
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
+      interval: 5s        # Cứ mỗi 5 giây kiểm tra lại một lần
+      timeout: 5s         # Quá 5 giây không phản hồi coi như thất bại một lần
+      retries: 10         # Thử lại tối đa 10 lần
+      start_period: 15s   # Thời gian chờ ban đầu để MySQL khởi tạo cơ sở dữ liệu (không tính vào số lần thất bại)
+
+  # Dịch vụ quan trắc
+  grafana-lgtm:
+    image: 'grafana/otel-lgtm:latest'
+    container_name: grafana_lgtm
+    ports:
+      - '3000:3000'
+      - '4317:4317'
+      - '4318:4318'
+
+  # Spring Boot Backend
+  backend:
+    build: 
+      context: ./BE
+      dockerfile: Dockerfile
+    container_name: job_portal_be
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/job_portal?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - MANAGEMENT_OTLP_METRICS_EXPORT_URL=http://grafana-lgtm:4318/v1/metrics
+      - MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT=http://grafana-lgtm:4318/v1/traces
+      - MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_ENDPOINT=http://grafana-lgtm:4318/v1/logs
+    depends_on:
+      mysql-db:
+        condition: service_healthy # Chỉ khởi động khi mysql-db đã vượt qua bài kiểm tra healthcheck bên trên
+      grafana-lgtm:
+        condition: service_started
+
+  # React Frontend
+  frontend:
+    build: 
+      context: ./FE
+      dockerfile: Dockerfile
+    container_name: job_portal_fe
+    ports:
+      - "5173:80" 
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  mysql_data:

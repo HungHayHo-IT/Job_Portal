@@ -9,6 +9,7 @@ import com.example.BE.entity.Job;
 import com.example.BE.entity.JobApplication;
 import com.example.BE.entity.JobPortalUser;
 import com.example.BE.entity.Profile;
+import com.example.BE.job.mapper.JobMapper;
 import com.example.BE.job.service.IJobService;
 import com.example.BE.repository.JobApplicationRepository;
 import com.example.BE.repository.JobPortalUserRepository;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class JobServiceImpl implements IJobService {
 
+    private final JobMapper jobMapper;
     private final JobApplicationRepository jobApplicationRepository;
     private final JobRepository jobRepository;
     private final JobPortalUserRepository userRepository;
@@ -42,7 +44,7 @@ public class JobServiceImpl implements IJobService {
 
         List<Job> jobs = employer.getCompany().getJobs();
         return jobs.stream()
-                .map(job -> transformJobToDto(job))
+                .map(job -> jobMapper.transformJobToDto(job))
                 .collect(Collectors.toList());
     }
 
@@ -62,7 +64,7 @@ public class JobServiceImpl implements IJobService {
         Job job = employer.getCompany().getJobs().stream().filter(j -> j.getId().equals(jobId)).findFirst()
                 .orElseThrow(() -> new RuntimeException("Job not found"));
         job.setStatus(status);
-        return transformJobToDto(job);
+        return jobMapper.transformJobToDto(job);
     }
 
     @Override
@@ -74,20 +76,20 @@ public class JobServiceImpl implements IJobService {
         if (employer.getCompany() == null) {
             throw new RuntimeException("Employer does not have a company assigned. Please contact admin.");
         }
-        Job job = tranformDtoToEntity(jobDto);
+        Job job = jobMapper.tranformDtoToEntity(jobDto);
         job.setPostedDate(Instant.now());
         job.setApplicationsCount(0);
         job.setStatus("DRAFT");
         job.setCompany(employer.getCompany());
         Job savedJob = jobRepository.save(job);
-        return transformJobToDto(savedJob);
+        return jobMapper.transformJobToDto(savedJob);
     }
 
     @Override
     public List<JobApplicationDto> getApplicationsByJobForEmployer(Long jobId) {
         List<JobApplication> applications = jobApplicationRepository.findByJobIdOrderByAppliedAtAsc(jobId);
         return applications.stream()
-                .map(jobApplication -> mapToJobApplicationDto(jobApplication))
+                .map(jobApplication -> jobMapper.mapToJobApplicationDto(jobApplication))
                 .collect(Collectors.toList());
     }
 
@@ -99,75 +101,5 @@ public class JobServiceImpl implements IJobService {
         return updatedRows > 0;
     }
 
-    private Job tranformDtoToEntity(JobDto jobDto) {
-        Job job = new Job();
-        BeanUtils.copyProperties(jobDto, job);
-        return job;
-    }
 
-    private JobDto transformJobToDto(Job job) {
-        return new JobDto(
-                job.getId(),
-                job.getTitle(),
-                job.getCompany().getId(),
-                job.getCompany().getName(),
-                job.getCompany().getLogo(),
-                job.getLocation(),
-                job.getWorkType(),
-                job.getJobType(),
-                job.getCategory(),
-                job.getExperienceLevel(),
-                job.getSalaryMin(),
-                job.getSalaryMax(),
-                job.getSalaryCurrency(),
-                job.getSalaryPeriod(),
-                job.getDescription(),
-                job.getRequirements(),
-                job.getBenefits(),
-                job.getPostedDate(),
-                job.getApplicationDeadline(),
-                job.getApplicationsCount(),
-                job.getFeatured(),
-                job.getUrgent(),
-                job.getRemote(),
-                job.getStatus()
-        );
-    }
-    private JobApplicationDto mapToJobApplicationDto(JobApplication application) {
-        // Map profile if exists
-        ProfileDto profileDto = null;
-        Profile profile = application.getUser().getProfile();
-        if (profile != null) {
-            profileDto = new ProfileDto(
-                    profile.getId(),
-                    profile.getUser().getId(),
-                    profile.getJobTitle(),
-                    profile.getLocation(),
-                    profile.getExperienceLevel(),
-                    profile.getProfessionalBio(),
-                    profile.getPortfolioWebsite(),
-                    profile.getProfilePicture(),
-                    profile.getProfilePictureName(),
-                    profile.getProfilePictureType(),
-                    profile.getResume(),
-                    profile.getResumeName(),
-                    profile.getResumeType(),
-                    profile.getCreatedAt(),
-                    profile.getUpdatedAt()
-            );
-        }
-        return new JobApplicationDto(
-                application.getId(),
-                application.getUser().getId(),
-                application.getUser().getName(),
-                application.getUser().getEmail(),
-                application.getUser().getMobileNumber(),
-                profileDto,
-                transformJobToDto(application.getJob()),
-                application.getAppliedAt(),
-                application.getStatus(),
-                application.getCoverLetter(),
-                application.getNotes()
-        );
-    }
 }
