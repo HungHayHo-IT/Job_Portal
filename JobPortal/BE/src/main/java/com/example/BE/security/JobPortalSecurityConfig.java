@@ -40,9 +40,14 @@ public class JobPortalSecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+        tokenRepository.setCookieCustomizer(cookie -> {
+            cookie.sameSite("None");
+            cookie.secure(true);
+        });
         httpSecurity
                 .csrf(csrf->csrf.ignoringRequestMatchers("/actuator/**")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(tokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
                 .cors(corsConfig->corsConfig.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(requests-> {
