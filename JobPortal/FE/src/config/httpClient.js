@@ -35,12 +35,9 @@ const PUBLIC_ENDPOINTS = [
 
 /**
  * Check if the request URL is a public endpoint
- * Note: We need to check exact matches to avoid false positives
- * For example, /admin/contacts should not match /contacts
  */
 const isPublicEndpoint = (url) => {
   return PUBLIC_ENDPOINTS.some((endpoint) => {
-    // Check if URL exactly matches or starts with the endpoint followed by a slash or query param
     return (
       url === endpoint ||
       url.startsWith(endpoint + "/") ||
@@ -49,15 +46,15 @@ const isPublicEndpoint = (url) => {
   });
 };
 
+// Biến lưu trữ CSRF Token trong bộ nhớ tạm để tái sử dụng
+let cachedCsrfToken = null;
+
 /**
  * Request Interceptor
  * Automatically adds Accept header and handles CSRF token for non-safe HTTP methods
  */
 httpClient.interceptors.request.use(
   async (config) => {
-    // Add Accept header with default value
-    // Developers can override this by passing headers in the request config
-
     config.headers.Accept = DEFAULT_ACCEPT_HEADER;
 
     // Add authentication token for non-public endpoints
@@ -71,21 +68,29 @@ httpClient.interceptors.request.use(
     // Handle CSRF token for non-safe HTTP methods
     const safeMethods = ["GET", "HEAD", "OPTIONS"];
     if (!safeMethods.includes(config.method.toUpperCase())) {
-      let csrfToken = Cookies.get("XSRF-TOKEN");
+      // Ưu tiên đọc từ cookie (chạy local) hoặc từ biến cache (khi deploy cross-domain)
+      let csrfToken = Cookies.get("XSRF-TOKEN") || cachedCsrfToken;
 
-      // If CSRF token is not present in cookies, fetch it from the server
+      // Nếu không có, tiến hành gọi API để lấy
       if (!csrfToken) {
         try {
-          await axios.get(`${API_BASE_URL}/csrf-token/public`, {
-            withCredentials: true,
-          });
-          csrfToken = Cookies.get("XSRF-TOKEN");
+          const response = await axios.get(
+            `${API_BASE_URL}/csrf-token/public`,
+            {
+              withCredentials: true,
+            }
+          );
+
+          // Lấy token trực tiếp từ response body thay vì cố gắng đọc lại Cookie
+          csrfToken = response.data.token;
+
+          // Lưu token vào cache để sử dụng cho các request sau
+          cachedCsrfToken = csrfToken;
 
           if (!csrfToken) {
-            throw new Error("Failed to retrieve CSRF token from cookies");
+            throw new Error("Failed to retrieve CSRF token from API response");
           }
         } catch (error) {
-          // Ignore 404 errors (endpoint might not be available) and continue
           if (error.response && error.response.status === 404) {
             console.warn(
               "[CSRF Token] Endpoint not found (404), continuing without CSRF token"
@@ -118,31 +123,23 @@ httpClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Enhanced error handling
     if (error.response) {
-      // Server responded with error status
       console.error("[HTTP Response Error]", {
         status: error.response.status,
         data: error.response.data,
         url: error.config.url,
       });
 
-      // Handle specific status codes
       switch (error.response.status) {
         case 401:
-          // Only redirect to login if this is NOT a login request
-          // and we're NOT already on the login page
           const isLoginRequest = error.config.url.includes("/auth/login");
           const isOnLoginPage = window.location.pathname === "/login";
 
           if (!isLoginRequest && !isOnLoginPage) {
-            // Unauthorized - clear token and user data, then redirect to login
             localStorage.removeItem("authToken");
             localStorage.removeItem("jobPortalUser");
             window.location.href = "/login";
           } else {
-            // If it's a login request or we're on login page, just clear token
-            // but don't redirect (let the component handle the error)
             localStorage.removeItem("authToken");
             localStorage.removeItem("jobPortalUser");
           }
@@ -160,10 +157,8 @@ httpClient.interceptors.response.use(
           console.error("An error occurred");
       }
     } else if (error.request) {
-      // Request was made but no response received
       console.error("[HTTP No Response]", error.request);
     } else {
-      // Something else happened
       console.error("[HTTP Error]", error.message);
     }
 
@@ -173,20 +168,6 @@ httpClient.interceptors.response.use(
 
 /**
  * Helper function to make requests with custom API version
- *
- * @example
- * // Use default version (1.0)
- * const response = await httpClient.get('/companies');
- *
- * @example
- * // Use specific version (2.0)
- * const response = await httpClient.get('/companies', {
- *   headers: { 'Accept': 'application/vnd.eazyapp+json;v=2.0' }
- * });
- *
- * @example
- * // Use withApiVersion helper
- * const response = await withApiVersion('2.0').get('/companies');
  */
 export const withApiVersion = (version) => {
   const acceptHeader = `application/vnd.eazyapp+json;v=${version}`;
