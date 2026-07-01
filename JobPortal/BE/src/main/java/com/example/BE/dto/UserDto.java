@@ -10,7 +10,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @ToString
-public class UserDto implements Serializable {
+public class UserDto  {
 
     private Long userId;
     private String name;

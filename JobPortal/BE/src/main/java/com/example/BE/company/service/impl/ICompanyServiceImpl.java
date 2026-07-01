@@ -10,6 +10,7 @@ import com.example.BE.repository.CompanyRepository;
 import com.example.BE.company.service.ICompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ public class ICompanyServiceImpl implements ICompanyService
 
 
 
+    @Cacheable(value = "companiesCache")
     @Override
     public List<CompanyDto> getAllCompanies() {
         List<Company> companyList =companyRepository.findAllWithJobsByStatus(ApplicationConstants.ACTIVE_STATUS);

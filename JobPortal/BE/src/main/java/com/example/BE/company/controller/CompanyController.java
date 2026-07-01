@@ -29,7 +29,6 @@ public class CompanyController {
         return ResponseEntity.ok().body(companyList);
     }
 
-    @Cacheable("companies")
     @GetMapping(path = "/admin")
     public ResponseEntity<List<CompanyDto>> getAllCompaniesForAdmin(){
         List<CompanyDto> companyList = companyService.getAllCompaniesForAdmin();

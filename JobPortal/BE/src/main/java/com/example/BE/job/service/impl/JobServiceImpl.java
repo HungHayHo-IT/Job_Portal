@@ -17,6 +17,8 @@ import com.example.BE.repository.JobRepository;
 import com.example.BE.security.util.ApplicationUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +35,8 @@ public class JobServiceImpl implements IJobService {
     private final JobApplicationRepository jobApplicationRepository;
     private final JobRepository jobRepository;
     private final JobPortalUserRepository userRepository;
+
+    @Cacheable(value = "employerJobs" , key = "#employerEmail")
     @Override
     public List<JobDto> getEmployerJobs(String employerEmail) {
         JobPortalUser employer = userRepository.findJobPortalUserByEmail(employerEmail)
@@ -67,6 +71,8 @@ public class JobServiceImpl implements IJobService {
         return jobMapper.transformJobToDto(job);
     }
 
+
+    @CachePut(value = "employerJobs" , key = "#result.id")
     @Override
     @Transactional
     public JobDto createJob(JobDto jobDto, String employerEmail) {

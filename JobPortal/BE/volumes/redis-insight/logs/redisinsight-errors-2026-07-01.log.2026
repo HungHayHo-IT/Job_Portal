@@ -1,4 +1,4 @@
-7/1/2026, 8:51:44 AM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
+7/1/2026, 12:53:52 PM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
   error: {
     type: 'Error',
     message: 'Error loading shared library libsecret-1.so.0: No such file or directory (needed by /usr/src/app/redisinsight/api/node_modules/keytar/build/Release/keytar.node)',

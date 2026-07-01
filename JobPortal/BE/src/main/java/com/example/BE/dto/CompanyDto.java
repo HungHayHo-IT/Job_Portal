@@ -5,6 +5,8 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -43,5 +45,5 @@ public record CompanyDto(
         @NotBlank(message = "Website can not be empty")
         String website,
 
-        Instant createdAt, List<JobDto> jobs) {
+        Instant createdAt, List<JobDto> jobs) implements Serializable {
 }

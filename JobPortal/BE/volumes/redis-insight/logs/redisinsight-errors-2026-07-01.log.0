@@ -1,4 +1,4 @@
-7/1/2026, 4:28:10 AM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
+7/1/2026, 9:58:06 AM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
   error: {
     type: 'Error',
     message: 'Error loading shared library libsecret-1.so.0: No such file or directory (needed by /usr/src/app/redisinsight/api/node_modules/keytar/build/Release/keytar.node)',
@@ -7,83 +7,91 @@
   },
   data: undefined
 }
-7/1/2026, 4:33:05 AM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:dc827bdd-0e99-4223-bc54-bdc9c18485f0 was not Found | {
-  error: undefined,
+7/1/2026, 10:08:12 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'AggregateError',
+    message: '',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '00d652cf-ac7e-452d-9130-4d8bd7480684',
+        uniqueId: undefined
+      },
+      databaseId: 'edb4fa55-ee85-4942-8bfe-dcb8d537d179',
+      context: 'Common'
+    }
+  ]
+}
+7/1/2026, 10:08:12 AM | ERROR | DatabaseService | Connection test failed | {
+  error: {
+    type: 'RedisConnectionFailedException',
+    message: '',
+    stack: undefined,
+    cause: {
+      type: 'AggregateError',
+      message: '',
+      stack: undefined,
+      cause: undefined
+    }
+  },
   sessionMetadata: {
     data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
     userId: '1',
     accountId: '1',
     sessionId: '1',
-    correlationId: '84c8a13f-20d1-44b4-936e-76acc7f42d83',
+    correlationId: '00d652cf-ac7e-452d-9130-4d8bd7480684',
     uniqueId: undefined
   },
   data: undefined
 }
-7/1/2026, 4:33:05 AM | ERROR | PluginService | Error when trying to process plugin common | {
-  error: undefined,
-  data: [
-    [
-      {
-        target: { main: './index.js', name: 'common', visualizations: [] },
-        value: [],
-        property: 'visualizations',
-        children: [],
-        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
-      }
-    ]
-  ]
-}
-7/1/2026, 8:15:20 AM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:dc827bdd-0e99-4223-bc54-bdc9c18485f0 was not Found | {
-  error: undefined,
-  sessionMetadata: {
-    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
-    userId: '1',
-    accountId: '1',
-    sessionId: '1',
-    correlationId: 'a509f91e-504c-45c7-adb0-45440db4b219',
-    uniqueId: undefined
+7/1/2026, 10:08:13 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'AggregateError',
+    message: '',
+    stack: undefined,
+    cause: undefined
   },
-  data: undefined
-}
-7/1/2026, 8:15:20 AM | ERROR | PluginService | Error when trying to process plugin common | {
-  error: undefined,
   data: [
-    [
-      {
-        target: { main: './index.js', name: 'common', visualizations: [] },
-        value: [],
-        property: 'visualizations',
-        children: [],
-        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
-      }
-    ]
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '00d652cf-ac7e-452d-9130-4d8bd7480684',
+        uniqueId: undefined
+      },
+      databaseId: 'edb4fa55-ee85-4942-8bfe-dcb8d537d179',
+      context: 'Common'
+    }
   ]
 }
-7/1/2026, 8:16:51 AM | ERROR | PluginService | Error when trying to process plugin common | {
-  error: undefined,
+7/1/2026, 10:08:14 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'AggregateError',
+    message: '',
+    stack: undefined,
+    cause: undefined
+  },
   data: [
-    [
-      {
-        target: { main: './index.js', name: 'common', visualizations: [] },
-        value: [],
-        property: 'visualizations',
-        children: [],
-        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
-      }
-    ]
-  ]
-}
-7/1/2026, 8:16:55 AM | ERROR | PluginService | Error when trying to process plugin common | {
-  error: undefined,
-  data: [
-    [
-      {
-        target: { main: './index.js', name: 'common', visualizations: [] },
-        value: [],
-        property: 'visualizations',
-        children: [],
-        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
-      }
-    ]
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '00d652cf-ac7e-452d-9130-4d8bd7480684',
+        uniqueId: undefined
+      },
+      databaseId: 'edb4fa55-ee85-4942-8bfe-dcb8d537d179',
+      context: 'Common'
+    }
   ]
 }
