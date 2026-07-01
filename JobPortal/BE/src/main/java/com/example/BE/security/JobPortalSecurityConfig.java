@@ -42,8 +42,8 @@ public class JobPortalSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         tokenRepository.setCookieCustomizer(cookie -> {
-            cookie.sameSite("None");
-            cookie.secure(true);
+            cookie.sameSite("Lax");
+            cookie.secure(false);
         });
         httpSecurity
                 .csrf(csrf->csrf.ignoringRequestMatchers("/actuator/**")

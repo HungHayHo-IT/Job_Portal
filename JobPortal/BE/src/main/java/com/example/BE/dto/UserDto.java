@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 @Getter
 @Setter
 @ToString
-public class UserDto {
+public class UserDto implements Serializable {
 
     private Long userId;
     private String name;
