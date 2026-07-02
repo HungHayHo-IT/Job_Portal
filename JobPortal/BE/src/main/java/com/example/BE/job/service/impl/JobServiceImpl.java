@@ -17,8 +17,10 @@ import com.example.BE.repository.JobRepository;
 import com.example.BE.security.util.ApplicationUtility;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +54,11 @@ public class JobServiceImpl implements IJobService {
                 .collect(Collectors.toList());
     }
 
+
+    @Caching(
+            put = {@CachePut(value = "jobDetail" , key = "#jobId")},
+            evict = {@CacheEvict(value = "employerJobs", key = "#employerEmail")}
+    )
     @Transactional
     @Override
     public JobDto updateJobStatus(Long jobId, String status, String employerEmail) {
@@ -72,7 +79,7 @@ public class JobServiceImpl implements IJobService {
     }
 
 
-    @CachePut(value = "employerJobs" , key = "#result.id")
+    @CacheEvict(value = "employerJobs" , key = "#employerEmail")
     @Override
     @Transactional
     public JobDto createJob(JobDto jobDto, String employerEmail) {

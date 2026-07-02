@@ -96,16 +96,7 @@ public class JobPortalSecurityConfig {
 
     }
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        var user1 = User.builder().username("madan")
-//                .password("$2a$10$viS6XrG2FpiZXPQgP7.rQeBrG6TauRaybxsaNjNi.WCLCdIURzZCq")//Madan@123
-//                .roles("USER").build();
-//        var user2 = User.builder().username("admin")
-//                .password("$2a$10$CurDmUEPRQsX5AhEN1NSV.ejUteU0S3dj5XfjxOjaVFhCCTOuj8WG")//Admin@123
-//                .roles("ADMIN").build();
-//        return new InMemoryUserDetailsManager(user1, user2);
-//    }
+
 
     //Vì class JobPortalUsernamePwd... của bạn có @Component, Spring sẽ tự lấy nó và "nhét" vào tay ông Trưởng phòng này.
     @Bean

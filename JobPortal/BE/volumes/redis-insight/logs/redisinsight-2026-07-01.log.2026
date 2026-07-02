@@ -379,3 +379,304 @@
 7/1/2026, 12:53:54 PM | INFO | RouterExplorer | Mapped {/api/databases/:dbInstance/query-library/seed, POST} route | { error: undefined, data: undefined }
 7/1/2026, 12:53:56 PM | INFO | NestApplication | Nest application successfully started | { error: undefined, data: undefined }
 7/1/2026, 12:53:56 PM | INFO | boostrap | Server is running on http(s)://0.0.0.0:5540 | { error: undefined, data: undefined }
+7/1/2026, 1:00:45 PM | WARN | IoredisRedisConnectionStrategy | Server closed the connection. | {
+  error: undefined,
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '36eac31a-79ab-436e-a51d-692c9616727b',
+        uniqueId: undefined
+      },
+      databaseId: '1bd0887c-577d-40ef-ba8b-c8201450ba34',
+      context: 'Common'
+    }
+  ]
+}
+7/1/2026, 1:00:45 PM | WARN | IoredisRedisConnectionStrategy | Server closed the connection. | {
+  error: undefined,
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '36eac31a-79ab-436e-a51d-692c9616727b',
+        uniqueId: undefined
+      },
+      databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+      context: 'Common'
+    }
+  ]
+}
+7/1/2026, 1:15:19 PM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ee72ffd7-4d49-49a8-9e5a-8f9c757867ba was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '293949e6-da8d-4715-a990-7d739b06a31b',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 1:15:19 PM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/1/2026, 1:36:07 PM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/1/2026, 1:36:07 PM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ee72ffd7-4d49-49a8-9e5a-8f9c757867ba was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '835c88ff-74ee-469f-b89b-ee6628df6f08',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 1:54:03 PM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/1/2026, 1:54:03 PM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ee72ffd7-4d49-49a8-9e5a-8f9c757867ba was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '1aecf42b-55b3-413f-873e-756eaa7ad089',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 2:50:53 PM | WARN | IoredisRedisConnectionStrategy | Server closed the connection. | {
+  error: undefined,
+  data: [
+    {
+      sessionMetadata: { userId: '1', accountId: '1', sessionId: '1' },
+      databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+      context: 'Common',
+      db: 0
+    }
+  ]
+}
+7/1/2026, 3:15:02 PM | ERROR | StringService | Failed to get string value. | {
+  error: {
+    type: 'NotFoundException',
+    message: 'Key with this name does not exist.',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Browser',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '1be0c16a-33ca-4b44-8f42-59a952982e7d',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:15:02 PM | ERROR | KeysService | Failed to get key info. Not found key: employerJobs::employee@gmail.com | {
+  error: undefined,
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Browser',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '323e9310-7b8b-41d1-8c28-3fa37137709e',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:36:58 PM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Browser',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '6cffca8a-8551-431f-be75-2a4383d6261e',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:36:58 PM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: 'ec254af0-8476-45da-a3c5-bb729ecb1b2a',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:37:03 PM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: 'ec254af0-8476-45da-a3c5-bb729ecb1b2a',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:37:03 PM | WARN | IoredisRedisConnectionStrategy | Server closed the connection. | {
+  error: undefined,
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: 'ec254af0-8476-45da-a3c5-bb729ecb1b2a',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:37:03 PM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Browser',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '6cffca8a-8551-431f-be75-2a4383d6261e',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:37:03 PM | WARN | IoredisRedisConnectionStrategy | Server closed the connection. | {
+  error: undefined,
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Browser',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '6cffca8a-8551-431f-be75-2a4383d6261e',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/1/2026, 3:37:07 PM | INFO | boostrap | Signal SIGTERM received. Shutting down... | { error: undefined, data: undefined }
