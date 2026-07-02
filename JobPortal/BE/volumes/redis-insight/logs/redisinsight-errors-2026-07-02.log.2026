@@ -364,3 +364,149 @@
   },
   data: undefined
 }
+7/2/2026, 9:22:39 AM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
+  error: {
+    type: 'Error',
+    message: 'Error loading shared library libsecret-1.so.0: No such file or directory (needed by /usr/src/app/redisinsight/api/node_modules/keytar/build/Release/keytar.node)',
+    stack: undefined,
+    cause: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:23:11 AM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ae98fb44-bd26-4273-bf0a-561c5bc40852 was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: 'cbd96950-0709-4c04-8860-b0ffe497a49c',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:23:11 AM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/2/2026, 9:24:21 AM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/2/2026, 9:53:26 AM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/2/2026, 9:53:26 AM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ae98fb44-bd26-4273-bf0a-561c5bc40852 was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: 'a608ba70-3eea-472d-a924-8d66a58be09d',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:58:33 AM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/2/2026, 9:58:33 AM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ae98fb44-bd26-4273-bf0a-561c5bc40852 was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '21ce9e39-9214-4edc-bfe1-7056bf945429',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 10:00:54 AM | ERROR | PluginService | Error when trying to process plugin common | {
+  error: undefined,
+  data: [
+    [
+      {
+        target: { main: './index.js', name: 'common', visualizations: [] },
+        value: [],
+        property: 'visualizations',
+        children: [],
+        constraints: { arrayNotEmpty: 'visualizations should not be empty' }
+      }
+    ]
+  ]
+}
+7/2/2026, 10:00:54 AM | ERROR | LocalDatabaseSettingsRepository | Database settings item with id:ae98fb44-bd26-4273-bf0a-561c5bc40852 was not Found | {
+  error: undefined,
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '355123fa-39ec-4171-9c93-bdb1cb1727df',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 10:13:49 AM | ERROR | KeysService | Failed to get key info. Not found key: companiesCache::SimpleKey [] | {
+  error: undefined,
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ae98fb44-bd26-4273-bf0a-561c5bc40852',
+    uniqueId: undefined,
+    context: 'Browser',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '0f6fadb2-bba2-4c04-8cd5-99965c8587aa',
+    uniqueId: undefined
+  },
+  data: undefined
+}
