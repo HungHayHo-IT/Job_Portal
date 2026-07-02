@@ -9,7 +9,9 @@ import com.example.BE.entity.Job;
 import com.example.BE.repository.CompanyRepository;
 import com.example.BE.company.service.ICompanyService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ public class ICompanyServiceImpl implements ICompanyService
         ).collect(Collectors.toList());
     }
 
+
     @Override
     public List<CompanyDto> getAllCompaniesForAdmin() {
         List<Company> companyList = companyRepository.findAll();
@@ -44,6 +47,7 @@ public class ICompanyServiceImpl implements ICompanyService
         ).collect(Collectors.toList());
     }
 
+    @CacheEvict(value="companiesCache" , allEntries = true)
     @Transactional
     @Override
     public boolean createCompany(CompanyDto companyDto) {
@@ -52,6 +56,7 @@ public class ICompanyServiceImpl implements ICompanyService
         return savedCompany.getId() != null && savedCompany.getId() > 0;
     }
 
+    @CacheEvict(value = "companiesCache" , allEntries = true)
     @Transactional
     @Override
     public boolean updateCompanyDetails(Long id, CompanyDto companyDto) {
@@ -64,6 +69,7 @@ public class ICompanyServiceImpl implements ICompanyService
         return updateCompany>0;
     }
 
+    @CacheEvict(value = "companiesCache" , key = "#id")
     @Transactional
     @Override
     public void deleteCompanyById(Long id) {

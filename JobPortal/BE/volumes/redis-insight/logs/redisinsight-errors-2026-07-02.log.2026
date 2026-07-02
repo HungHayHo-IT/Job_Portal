@@ -1,0 +1,366 @@
+7/2/2026, 9:14:57 AM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
+  error: {
+    type: 'Error',
+    message: 'Error loading shared library libsecret-1.so.0: No such file or directory (needed by /usr/src/app/redisinsight/api/node_modules/keytar/build/Release/keytar.node)',
+    stack: undefined,
+    cause: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:18:42 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '4da0f043-399d-46d6-9a53-44f0a196c215',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:18:42 AM | ERROR | DatabaseClientFactory | Failed to create database client | {
+  error: {
+    type: 'RedisConnectionUnavailableException',
+    message: 'Could not connect to redis:6379, please check the connection details.',
+    stack: undefined,
+    cause: {
+      type: 'Error',
+      message: 'getaddrinfo ENOTFOUND redis',
+      stack: undefined,
+      cause: undefined
+    }
+  },
+  data: undefined
+}
+7/2/2026, 9:18:46 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '62dca00f-d556-4c8e-9d39-5601fabf9b19',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:18:46 AM | ERROR | DatabaseClientFactory | Failed to create database client | {
+  error: {
+    type: 'RedisConnectionUnavailableException',
+    message: 'Could not connect to redis:6379, please check the connection details.',
+    stack: undefined,
+    cause: {
+      type: 'Error',
+      message: 'getaddrinfo ENOTFOUND redis',
+      stack: undefined,
+      cause: undefined
+    }
+  },
+  data: undefined
+}
+7/2/2026, 9:18:47 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '4da0f043-399d-46d6-9a53-44f0a196c215',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:18:51 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '62dca00f-d556-4c8e-9d39-5601fabf9b19',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:18:52 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '4da0f043-399d-46d6-9a53-44f0a196c215',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:18:55 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  clientMetadata: {
+    sessionMetadata: undefined,
+    databaseId: 'ee72ffd7-4d49-49a8-9e5a-8f9c757867ba',
+    uniqueId: undefined,
+    context: 'Common',
+    db: undefined
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '62dca00f-d556-4c8e-9d39-5601fabf9b19',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:19:35 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '09ba59e9-f133-458b-8a91-d5e0e63513ec',
+        uniqueId: undefined
+      },
+      databaseId: 'c8738e6c-d0d0-4a30-b76b-d0ccc716aee3',
+      context: 'Common'
+    }
+  ]
+}
+7/2/2026, 9:19:35 AM | ERROR | DatabaseService | Failed to add database. | {
+  error: {
+    type: 'RedisConnectionUnavailableException',
+    message: 'Could not connect to redis:6379, please check the connection details.',
+    stack: undefined,
+    cause: {
+      type: 'Error',
+      message: 'getaddrinfo ENOTFOUND redis',
+      stack: undefined,
+      cause: undefined
+    }
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: '09ba59e9-f133-458b-8a91-d5e0e63513ec',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:19:39 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '09ba59e9-f133-458b-8a91-d5e0e63513ec',
+        uniqueId: undefined
+      },
+      databaseId: 'c8738e6c-d0d0-4a30-b76b-d0ccc716aee3',
+      context: 'Common'
+    }
+  ]
+}
+7/2/2026, 9:19:44 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: '09ba59e9-f133-458b-8a91-d5e0e63513ec',
+        uniqueId: undefined
+      },
+      databaseId: 'c8738e6c-d0d0-4a30-b76b-d0ccc716aee3',
+      context: 'Common'
+    }
+  ]
+}
+7/2/2026, 9:20:08 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: 'c1ba0a7a-b5d5-44f3-9a10-7df59c0205ad',
+        uniqueId: undefined
+      },
+      databaseId: '12f96039-31d1-4759-8e56-14f07e5c4c54',
+      context: 'Common'
+    }
+  ]
+}
+7/2/2026, 9:20:08 AM | ERROR | DatabaseService | Failed to add database. | {
+  error: {
+    type: 'RedisConnectionUnavailableException',
+    message: 'Could not connect to redis:6380, please check the connection details.',
+    stack: undefined,
+    cause: {
+      type: 'Error',
+      message: 'getaddrinfo ENOTFOUND redis',
+      stack: undefined,
+      cause: undefined
+    }
+  },
+  sessionMetadata: {
+    data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+    userId: '1',
+    accountId: '1',
+    sessionId: '1',
+    correlationId: 'c1ba0a7a-b5d5-44f3-9a10-7df59c0205ad',
+    uniqueId: undefined
+  },
+  data: undefined
+}
+7/2/2026, 9:20:13 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: 'c1ba0a7a-b5d5-44f3-9a10-7df59c0205ad',
+        uniqueId: undefined
+      },
+      databaseId: '12f96039-31d1-4759-8e56-14f07e5c4c54',
+      context: 'Common'
+    }
+  ]
+}
+7/2/2026, 9:20:17 AM | ERROR | IoredisRedisConnectionStrategy | Failed connection to the redis database. | {
+  error: {
+    type: 'Error',
+    message: 'getaddrinfo ENOTFOUND redis',
+    stack: undefined,
+    cause: undefined
+  },
+  data: [
+    {
+      sessionMetadata: {
+        data: { data: undefined, requestMetadata: {}, uniqueId: undefined },
+        userId: '1',
+        accountId: '1',
+        sessionId: '1',
+        correlationId: 'c1ba0a7a-b5d5-44f3-9a10-7df59c0205ad',
+        uniqueId: undefined
+      },
+      databaseId: '12f96039-31d1-4759-8e56-14f07e5c4c54',
+      context: 'Common'
+    }
+  ]
+}
+7/2/2026, 9:22:18 AM | ERROR | KeytarEncryptionStrategy | Failed to initialize keytar module | {
+  error: {
+    type: 'Error',
+    message: 'Error loading shared library libsecret-1.so.0: No such file or directory (needed by /usr/src/app/redisinsight/api/node_modules/keytar/build/Release/keytar.node)',
+    stack: undefined,
+    cause: undefined
+  },
+  data: undefined
+}

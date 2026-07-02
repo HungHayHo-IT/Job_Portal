@@ -98,6 +98,7 @@ public class JobServiceImpl implements IJobService {
         return jobMapper.transformJobToDto(savedJob);
     }
 
+    @Cacheable(value = "jobApplications" , key = "#jobId" , unless = "#result ==null")
     @Override
     public List<JobApplicationDto> getApplicationsByJobForEmployer(Long jobId) {
         List<JobApplication> applications = jobApplicationRepository.findByJobIdOrderByAppliedAtAsc(jobId);
@@ -106,6 +107,7 @@ public class JobServiceImpl implements IJobService {
                 .collect(Collectors.toList());
     }
 
+    @CacheEvict(value = "jobApplications", allEntries = true)
     @Transactional
     @Override
     public boolean updateJobApplication(UpdateJobApplicationDto dto) {
