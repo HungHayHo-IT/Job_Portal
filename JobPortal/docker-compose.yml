@@ -6,10 +6,16 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: job_portal
+      MYSQL_USER: hunghayho
+      MYSQL_PASSWORD: hunghayho
     ports:
       - "3308:3306" 
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./BE/src/main/resources/sql/jobportal-schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
+      - ./BE/src/main/resources/sql/jobportal-data.sql:/docker-entrypoint-initdb.d/2-data.sql
+    networks:
+      - backend-networks
     # Cấu hình kiểm tra sức khỏe của database
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p123456"]
@@ -18,14 +24,19 @@ services:
       retries: 10         # Thử lại tối đa 10 lần
       start_period: 15s   # Thời gian chờ ban đầu để MySQL khởi tạo cơ sở dữ liệu (không tính vào số lần thất bại)
 
-  # Dịch vụ quan trắc
-  grafana-lgtm:
-    image: 'grafana/otel-lgtm:latest'
-    container_name: grafana_lgtm
+  redis-cache:
+    image: redis:alpine
+    container_name: job_portal_redis
     ports:
-      - '3000:3000'
-      - '4317:4317'
-      - '4318:4318'
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - backend-networks
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   # Spring Boot Backend
   backend:
@@ -37,16 +48,19 @@ services:
       - "8082:8082"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/job_portal?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=123456
-      - MANAGEMENT_OTLP_METRICS_EXPORT_URL=http://grafana-lgtm:4318/v1/metrics
-      - MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT=http://grafana-lgtm:4318/v1/traces
-      - MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_ENDPOINT=http://grafana-lgtm:4318/v1/logs
+      - SPRING_DATASOURCE_USERNAME=hunghayho
+      - SPRING_DATASOURCE_PASSWORD=hunghayho
+      - SPRING_DATA_REDIS_HOST=redis-cache
+      - SPRING_DATA_REDIS_PORT=6379
     depends_on:
       mysql-db:
         condition: service_healthy # Chỉ khởi động khi mysql-db đã vượt qua bài kiểm tra healthcheck bên trên
-      grafana-lgtm:
-        condition: service_started
+      redis-cache:
+        condition: service_healthy
+    networks:
+      - frontend-networks # Nối với frontend
+      - backend-networks  # Nối với database
+
 
   # React Frontend
   frontend:
@@ -59,6 +73,14 @@ services:
     depends_on:
       backend:
         condition: service_started
+    networks:
+      -  frontend-networks
 
 volumes:
   mysql_data:
+
+networks:
+  frontend-networks:
+    driver: bridge
+  backend-networks:
+    driver: bridge

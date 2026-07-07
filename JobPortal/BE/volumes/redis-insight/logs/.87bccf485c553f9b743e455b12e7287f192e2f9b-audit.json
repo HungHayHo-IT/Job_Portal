@@ -26,6 +26,16 @@
             "date": 1782983697872,
             "name": "/data/logs/redisinsight-errors-2026-07-02.log.2026",
             "hash": "bc127bf0ed71d6c78a6c7b6d28de95e772031897283b3312df8abebd6ce4dd20"
+        },
+        {
+            "date": 1783040029167,
+            "name": "/data/logs/redisinsight-errors-2026-07-03.log.0",
+            "hash": "86649efcca9c0202f832defabaa59cfba5b4e255ded037ecf1d38e0b913045c2"
+        },
+        {
+            "date": 1783073562024,
+            "name": "/data/logs/redisinsight-errors-2026-07-03.log.2026",
+            "hash": "ec9af8f99ae64908ace978cc958bff9f23356f7c6d9b07f59ea7d88532013a3d"
         }
     ]
 }
