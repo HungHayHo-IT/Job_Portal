@@ -22,7 +22,7 @@ services:
       interval: 5s        # Cứ mỗi 5 giây kiểm tra lại một lần
       timeout: 5s         # Quá 5 giây không phản hồi coi như thất bại một lần
       retries: 10         # Thử lại tối đa 10 lần
-      start_period: 15s   # Thời gian chờ ban đầu để MySQL khởi tạo cơ sở dữ liệu (không tính vào số lần thất bại)
+      start_period: 60s   # Thời gian chờ ban đầu để MySQL khởi tạo cơ sở dữ liệu (không tính vào số lần thất bại)
 
   redis-cache:
     image: redis:alpine
