@@ -11,10 +11,12 @@ import com.example.BE.entity.JobPortalUser;
 import com.example.BE.entity.Profile;
 import com.example.BE.job.mapper.JobMapper;
 import com.example.BE.job.service.IJobService;
+import com.example.BE.redis.cache.service.JobCacheService;
 import com.example.BE.repository.JobApplicationRepository;
 import com.example.BE.repository.JobPortalUserRepository;
 import com.example.BE.repository.JobRepository;
 import com.example.BE.security.util.ApplicationUtility;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +40,7 @@ public class JobServiceImpl implements IJobService {
     private final JobApplicationRepository jobApplicationRepository;
     private final JobRepository jobRepository;
     private final JobPortalUserRepository userRepository;
+    private final JobCacheService jobCacheService;
 
 
     @Override
@@ -123,10 +127,21 @@ public class JobServiceImpl implements IJobService {
 
     @Override
     public JobDto getPublicJobById(Long jobId) {
-        Job job = jobRepository.findById(jobId)
-                .filter(item -> "ACTIVE".equals(item.getStatus()))
-                .orElseThrow(() -> new RuntimeException("Active job not found"));
+        Optional<JobDto> cachedJob = jobCacheService.getJob(jobId);
 
+        if (cachedJob.isPresent()) {
+            return cachedJob.get();
+        }
+
+        JobDto job = loadJobFromDatabase(jobId);
+        jobCacheService.putJob(job);
+
+        return job;
+    }
+
+    private JobDto loadJobFromDatabase(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new EntityNotFoundException("Job not found with id: " + jobId));
         return jobMapper.transformJobToDto(job);
     }
 
