@@ -1,1 +1,26 @@
+services:
+  redis:
+    image: redis:7.4-alpine
+    container_name: jobportal-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - jobportal-redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: jobportal-redis-insight
+    ports:
+      - "5540:5540"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  jobportal-redis-data:

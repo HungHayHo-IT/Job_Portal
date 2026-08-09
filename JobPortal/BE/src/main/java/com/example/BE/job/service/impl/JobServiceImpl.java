@@ -113,5 +113,22 @@ public class JobServiceImpl implements IJobService {
         return updatedRows > 0;
     }
 
+    @Override
+    public List<JobDto> getPublicJobs() {
+        return jobRepository.findByStatusOrderByPostedDateDesc("ACTIVE")
+                .stream()
+                .map(jobMapper::transformJobToDto)
+                .toList();
+    }
+
+    @Override
+    public JobDto getPublicJobById(Long jobId) {
+        Job job = jobRepository.findById(jobId)
+                .filter(item -> "ACTIVE".equals(item.getStatus()))
+                .orElseThrow(() -> new RuntimeException("Active job not found"));
+
+        return jobMapper.transformJobToDto(job);
+    }
+
 
 }
