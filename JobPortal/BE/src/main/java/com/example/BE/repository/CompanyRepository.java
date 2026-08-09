@@ -2,6 +2,8 @@ package com.example.BE.repository;
 
 import com.example.BE.entity.Company;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,15 +19,16 @@ public interface CompanyRepository extends JpaRepository<Company,Long> {
     @Query("select distinct c from Company c join fetch c.jobs j where j.status = :status")
     List<Company> findAllWithJobsByStatus(@Param("status") String status);
 
+    @Cacheable("jobs")
     List<Company> fetchCompaniesWithJobsByStatus(@Param("status") String status);
 
-
+    @CacheEvict(value = "companies",allEntries = true)
     void deleteById(Long id);
 
-
+    @CacheEvict(value = "companies",allEntries = true)
     Company save(Company entity);
 
-
+    @CacheEvict(value = "companies" , allEntries = true)
     @Modifying(flushAutomatically = true , clearAutomatically = true)
     int updateCompanyDetails(
             @Param("id") Long id,

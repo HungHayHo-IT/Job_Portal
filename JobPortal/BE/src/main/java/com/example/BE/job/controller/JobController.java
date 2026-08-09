@@ -69,14 +69,6 @@ public class JobController {
         return ResponseEntity.ok("Application updated successfully");
     }
 
-    @GetMapping("/public")
-    public ResponseEntity<List<JobDto>> getPublicJobs() {
-        return ResponseEntity.ok(jobService.getPublicJobs());
-    }
 
-    @GetMapping("/{jobId}/public")
-    public ResponseEntity<JobDto> getPublicJob(@PathVariable Long jobId) {
-        return ResponseEntity.ok(jobService.getPublicJobById(jobId));
-    }
 
 }

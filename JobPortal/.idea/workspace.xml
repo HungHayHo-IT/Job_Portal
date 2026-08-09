@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ce9f648-94af-4477-a727-8218b03f7544" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/analytics/JobAnalyticsServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/analytics/service/JobAnalyticsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BE/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/company/service/impl/ICompanyServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/company/service/impl/ICompanyServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/controller/JobController.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/controller/JobController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/service/IJobService.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/service/IJobService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/service/impl/JobServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/service/impl/JobServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/cache/JobCacheServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/cache/service/JobCacheService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/config/RedisConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/repository/CompanyRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/repository/CompanyRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +45,9 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "com.poratu.idea.plugins.tomcat.setting.TomcatServersConfigurable"
   }
 }]]></component>

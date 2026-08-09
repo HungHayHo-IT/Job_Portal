@@ -18,9 +18,6 @@ public interface IJobService {
 
     boolean updateJobApplication(UpdateJobApplicationDto updateJobApplicationDto);
 
-    List<JobDto> getPublicJobs();
-
-    JobDto getPublicJobById(Long jobId);
 
 
 }

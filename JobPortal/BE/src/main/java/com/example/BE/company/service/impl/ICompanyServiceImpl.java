@@ -31,6 +31,7 @@ public class ICompanyServiceImpl implements ICompanyService
 
 
     @Override
+    @Cacheable(cacheNames = "public-companies")
     public List<CompanyDto> getAllCompanies() {
         List<Company> companyList =companyRepository.findAllWithJobsByStatus(ApplicationConstants.ACTIVE_STATUS);
         return companyList.stream().map(
@@ -39,6 +40,7 @@ public class ICompanyServiceImpl implements ICompanyService
     }
 
 
+    @Cacheable("companies")
     @Override
     public List<CompanyDto> getAllCompaniesForAdmin() {
         List<Company> companyList = companyRepository.findAll();
@@ -73,8 +75,4 @@ public class ICompanyServiceImpl implements ICompanyService
     public void deleteCompanyById(Long id) {
         companyRepository.deleteById(id);
     }
-
-
-
-
 }
