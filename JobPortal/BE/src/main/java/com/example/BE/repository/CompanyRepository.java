@@ -19,13 +19,13 @@ public interface CompanyRepository extends JpaRepository<Company,Long> {
 
     List<Company> fetchCompaniesWithJobsByStatus(@Param("status") String status);
 
-    @CacheEvict(value = "companies", allEntries = true)
+
     void deleteById(Long id);
 
-    @CacheEvict(value = "companies", allEntries = true)
+
     Company save(Company entity);
 
-    @CacheEvict(value = "companies", allEntries = true)
+
     @Modifying(flushAutomatically = true , clearAutomatically = true)
     int updateCompanyDetails(
             @Param("id") Long id,

@@ -38,7 +38,7 @@ public class JobServiceImpl implements IJobService {
     private final JobRepository jobRepository;
     private final JobPortalUserRepository userRepository;
 
-    @Cacheable(value = "employerJobs" , key = "#employerEmail")
+
     @Override
     public List<JobDto> getEmployerJobs(String employerEmail) {
         JobPortalUser employer = userRepository.findJobPortalUserByEmail(employerEmail)
@@ -55,10 +55,7 @@ public class JobServiceImpl implements IJobService {
     }
 
 
-    @Caching(
-            put = {@CachePut(value = "jobDetail" , key = "#jobId")},
-            evict = {@CacheEvict(value = "employerJobs", key = "#employerEmail")}
-    )
+
     @Transactional
     @Override
     public JobDto updateJobStatus(Long jobId, String status, String employerEmail) {
@@ -79,7 +76,7 @@ public class JobServiceImpl implements IJobService {
     }
 
 
-    @CacheEvict(value = "employerJobs" , key = "#employerEmail")
+
     @Override
     @Transactional
     public JobDto createJob(JobDto jobDto, String employerEmail) {
@@ -98,7 +95,7 @@ public class JobServiceImpl implements IJobService {
         return jobMapper.transformJobToDto(savedJob);
     }
 
-    @Cacheable(value = "jobApplications" , key = "#jobId" , unless = "#result ==null")
+
     @Override
     public List<JobApplicationDto> getApplicationsByJobForEmployer(Long jobId) {
         List<JobApplication> applications = jobApplicationRepository.findByJobIdOrderByAppliedAtAsc(jobId);
@@ -107,7 +104,7 @@ public class JobServiceImpl implements IJobService {
                 .collect(Collectors.toList());
     }
 
-    @CacheEvict(value = "jobApplications", allEntries = true)
+
     @Transactional
     @Override
     public boolean updateJobApplication(UpdateJobApplicationDto dto) {

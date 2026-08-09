@@ -113,11 +113,11 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
-		<!--Cache -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-cache</artifactId>
-		</dependency>
+<!--		&lt;!&ndash;Cache &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-cache</artifactId>-->
+<!--		</dependency>-->
 
 <!--		&lt;!&ndash;Cache caffeine TTL &ndash;&gt;-->
 <!--		<dependency>-->
@@ -130,11 +130,11 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		<!-- 🗄️ redis -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
+<!--		&lt;!&ndash; 🗄️ redis &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-redis</artifactId>-->
+<!--		</dependency>-->
 
 		<!--Actuator -->
 		<dependency>

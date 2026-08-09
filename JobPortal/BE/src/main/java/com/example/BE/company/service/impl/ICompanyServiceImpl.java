@@ -29,7 +29,7 @@ public class ICompanyServiceImpl implements ICompanyService
 
 
 
-    @Cacheable(value = "companiesCache")
+
     @Override
     public List<CompanyDto> getAllCompanies() {
         List<Company> companyList =companyRepository.findAllWithJobsByStatus(ApplicationConstants.ACTIVE_STATUS);
@@ -47,7 +47,7 @@ public class ICompanyServiceImpl implements ICompanyService
         ).collect(Collectors.toList());
     }
 
-    @CacheEvict(value="companiesCache" , allEntries = true)
+
     @Transactional
     @Override
     public boolean createCompany(CompanyDto companyDto) {
@@ -56,7 +56,6 @@ public class ICompanyServiceImpl implements ICompanyService
         return savedCompany.getId() != null && savedCompany.getId() > 0;
     }
 
-    @CacheEvict(value = "companiesCache" , allEntries = true)
     @Transactional
     @Override
     public boolean updateCompanyDetails(Long id, CompanyDto companyDto) {
@@ -69,7 +68,6 @@ public class ICompanyServiceImpl implements ICompanyService
         return updateCompany>0;
     }
 
-    @CacheEvict(value = "companiesCache" , key = "#id")
     @Transactional
     @Override
     public void deleteCompanyById(Long id) {

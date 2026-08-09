@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@EnableCaching
+//@EnableCaching
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl") //kích hoạt và cấu hình tính năng Auditing trong JPA.
 @EnableConfigurationProperties(value = {CorsProperties.class})
