@@ -62,6 +62,10 @@ public class JobServiceImpl implements IJobService {
 
     @Transactional
     @Override
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "job-detail", key = "#jobId"),
+            @CacheEvict(cacheNames = "public-jobs", allEntries = true)
+    })
     public JobDto updateJobStatus(Long jobId, String status, String employerEmail) {
         // Validate status
         if (!status.equals("ACTIVE") && !status.equals("CLOSED") && !status.equals("DRAFT")) {
