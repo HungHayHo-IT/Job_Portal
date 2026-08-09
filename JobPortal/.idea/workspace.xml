@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ce9f648-94af-4477-a727-8218b03f7544" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/cache/JobCacheServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/cache/service/JobCacheService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/redis/config/RedisCacheConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/BE/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/BeApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/BeApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/service/impl/JobServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/java/com/example/BE/job/service/impl/JobServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BE/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/BE/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +44,11 @@
     "settings.editor.selected.configurable": "com.poratu.idea.plugins.tomcat.setting.TomcatServersConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.example.BE.redis.config" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.BeApplication">
     <configuration name="BeApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.BE.BeApplication" />

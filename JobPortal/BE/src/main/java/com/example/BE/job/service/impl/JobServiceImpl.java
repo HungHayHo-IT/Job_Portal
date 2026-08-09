@@ -125,20 +125,30 @@ public class JobServiceImpl implements IJobService {
                 .toList();
     }
 
-    @Override
+    @Cacheable(
+            cacheNames = "job-detail",
+            key = "#jobId",
+            unless = "#result == null"
+    )
     public JobDto getPublicJobById(Long jobId) {
-        Optional<JobDto> cachedJob = jobCacheService.getJob(jobId);
-
-        if (cachedJob.isPresent()) {
-            return cachedJob.get();
-        }
-
-        JobDto job = loadJobFromDatabase(jobId);
-        jobCacheService.putJob(job);
-
-        return job;
+        // Đọc MySQL
+        return loadJobFromDatabase(jobId);
     }
 
+//    @Override
+//    public JobDto getPublicJobById(Long jobId) {
+//        Optional<JobDto> cachedJob = jobCacheService.getJob(jobId);
+//
+//        if (cachedJob.isPresent()) {
+//            return cachedJob.get();
+//        }
+//
+//        JobDto job = loadJobFromDatabase(jobId);
+//        jobCacheService.putJob(job);
+//
+//        return job;
+//    }
+//
     private JobDto loadJobFromDatabase(Long jobId) {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new EntityNotFoundException("Job not found with id: " + jobId));
