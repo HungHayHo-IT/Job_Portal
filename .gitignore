@@ -1,0 +1,38 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Java / Maven
+**/target/
+*.class
+hs_err_pid*
+replay_pid*
+
+# Node / Vite
+**/node_modules/
+**/.vite/
+**/dist/
+
+# Logs
+**/logs/
+*.log
+*.log.*
+
+# Redis/MySQL runtime data
+**/volumes/
+*.rdb
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Kubernetes secrets
+**/secret.yaml
+**/secret.yml
+**/*-secret.yaml
+**/*-secret.yml
+
+# Operating system
+.DS_Store
+Thumbs.db
