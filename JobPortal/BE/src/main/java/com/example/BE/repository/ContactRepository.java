@@ -6,9 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -19,7 +21,18 @@ public interface ContactRepository extends JpaRepository<Contact,Long> {
 
     Page<Contact> findContactsByStatus(String status, Pageable pageable);
 
-    @Modifying(flushAutomatically = true,clearAutomatically = true)
-    int updateStatusById(@Param("status") String status, @Param("id") Long id,
-                         @Param("updatedBy") String updatedBy);
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("""
+        UPDATE Contact c
+        SET c.status = :status,
+            c.updatedAt = :updatedAt,
+            c.updatedBy = :updatedBy
+        WHERE c.id = :id
+        """)
+    int updateStatusById(
+            @Param("status") String status,
+            @Param("id") Long id,
+            @Param("updatedBy") String updatedBy,
+            @Param("updatedAt") Instant updatedAt
+    );
 }

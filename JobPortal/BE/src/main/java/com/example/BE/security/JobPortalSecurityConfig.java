@@ -4,6 +4,7 @@ import com.example.BE.security.filter.JwtTokenValidatorFilter;
 import com.example.BE.security.util.CorsProperties;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class JobPortalSecurityConfig {
 
+    @Value("${server.servlet.session.cookie.secure:false}")
+    private boolean secureCookie;
+
     private final CorsProperties corsProperties;
 
     @Bean
@@ -43,7 +47,7 @@ public class JobPortalSecurityConfig {
         CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         tokenRepository.setCookieCustomizer(cookie -> {
             cookie.sameSite("Lax");
-            cookie.secure(false);
+            cookie.secure(secureCookie);
         });
         httpSecurity
                 .csrf(csrf->csrf.ignoringRequestMatchers("/actuator/**")

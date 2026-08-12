@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -126,7 +127,8 @@ class ContactServiceImplTest {
         when(contactRepository.updateStatusById(
                 eq("CLOSED"),
                 eq(1L),
-                anyString()
+                anyString(),
+                any(Instant.class)
         )).thenReturn(1);
 
         // Act

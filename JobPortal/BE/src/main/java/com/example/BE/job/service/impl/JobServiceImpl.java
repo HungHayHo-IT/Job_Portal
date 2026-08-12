@@ -106,7 +106,12 @@ public class JobServiceImpl implements IJobService {
     @Override
     public boolean updateJobApplication(UpdateJobApplicationDto dto) {
         int updatedRows = jobApplicationRepository.updateStatusAndNotesById(
-                dto.status().name(), dto.notes(),dto.applicationId(), ApplicationUtility.getLoggedInUser());
+                dto.status().name(),
+                dto.notes(),
+                dto.applicationId(),
+                ApplicationUtility.getLoggedInUser(),
+                Instant.now()
+        );
         return updatedRows > 0;
     }
 

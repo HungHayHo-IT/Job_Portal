@@ -87,7 +87,12 @@ public class ContactServiceImpl implements IContactService {
     @Transactional
     @Override
     public boolean closeContactMsg(Long id, String status) {
-        int  updatedRows = contactRepository.updateStatusById(status,id, ApplicationUtility.getLoggedInUser());
+        int updatedRows = contactRepository.updateStatusById(
+                status,
+                id,
+                ApplicationUtility.getLoggedInUser(),
+                Instant.now()
+        );
 
         return updatedRows>0;
     }
