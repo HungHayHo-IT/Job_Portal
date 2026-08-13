@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS companies (
                 title VARCHAR(255) NOT NULL,
                 company_id BIGINT NOT NULL,
                 location VARCHAR(255) NOT NULL,
-                work_type VARCHAR(50) NOT NULL, -- On-site, Remote, Hybrid
+                work_type VARCHAR(50) NOT NULL, -- On-site, Remote, HybridQ
                 job_type VARCHAR(50) NOT NULL, -- Full-time, Part-time, Contract, Freelance
                 category VARCHAR(100) NOT NULL, -- Technology, Design, Marketing, Sales, Finance, Healthcare, Education, Operations
                 experience_level VARCHAR(50) NOT NULL, -- Entry Level, Mid Level, Senior Level, Executive Level

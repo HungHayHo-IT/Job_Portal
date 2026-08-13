@@ -1,26 +1,84 @@
 services:
-  redis:
-    image: redis:7.4-alpine
-    container_name: jobportal-redis
+  mysql:
+    image: mysql:8.4
+    container_name: jobportal-mysql
+    restart: unless-stopped
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: jobportaldb
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
     ports:
-      - "6379:6379"
+      - "3308:3306"
+
     volumes:
-      - jobportal-redis-data:/data
-    command: redis-server --appendonly yes
+      - jobportal-mysql-data:/var/lib/mysql
+      - type: bind
+        source: ./BE/src/main/resources/sql/jobportal-schema.sql
+        target: /docker-entrypoint-initdb.d/01-schema.sql
+        read_only: true
+        bind:
+          create_host_path: false
+
+      - type: bind
+        source: ./BE/src/main/resources/sql/jobportal-data.sql
+        target: /docker-entrypoint-initdb.d/02-data.sql
+        read_only: true
+        bind:
+          create_host_path: false
+
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent",
+        ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 250s
 
-  redis-insight:
-    image: redis/redisinsight:latest
-    container_name: jobportal-redis-insight
+  backend:
+    container_name: jobportal-backend
+    restart: unless-stopped
+
+    build:
+      context: ./BE
+      dockerfile: Dockerfile
+
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/jobportaldb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_CORS_ALLOWED_ORIGINS: http://localhost,http://localhost:5173
+      LOG_LEVEL: INFO
+
     ports:
-      - "5540:5540"
+      - "8082:8082"
+
     depends_on:
-      redis:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    container_name: jobportal-frontend
+    restart: unless-stopped
+
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /api/v1
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      backend:
         condition: service_healthy
 
 volumes:
-  jobportal-redis-data:
+  jobportal-mysql-data:
