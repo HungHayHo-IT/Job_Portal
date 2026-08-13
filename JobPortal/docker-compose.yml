@@ -1,6 +1,10 @@
 services:
   mysql:
-    image: mysql:8.4
+    build:
+      context: ./BE/src/main/resources/sql
+      dockerfile: Dockerfile.mysql
+
+    image: jobportal-mysql:8.4
     container_name: jobportal-mysql
     restart: unless-stopped
 
@@ -15,19 +19,6 @@ services:
 
     volumes:
       - jobportal-mysql-data:/var/lib/mysql
-      - type: bind
-        source: ./BE/src/main/resources/sql/jobportal-schema.sql
-        target: /docker-entrypoint-initdb.d/01-schema.sql
-        read_only: true
-        bind:
-          create_host_path: false
-
-      - type: bind
-        source: ./BE/src/main/resources/sql/jobportal-data.sql
-        target: /docker-entrypoint-initdb.d/02-data.sql
-        read_only: true
-        bind:
-          create_host_path: false
 
     healthcheck:
       test:
