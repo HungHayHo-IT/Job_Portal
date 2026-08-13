@@ -1,177 +1,218 @@
-import { useState, useMemo, useEffect } from 'react'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
-import { jobTitles, cities, experienceLevels } from '../data/mockData'
-import { useJobs } from '../context/JobContext'
-import { useJobsData } from '../contexts/JobsDataContext'
-import { useAuth } from '../context/AuthContext'
-import RefreshButton from '../components/RefreshButton'
-import ApplyJobModal from '../components/ApplyJobModal'
-import ConfirmationModal from '../components/ConfirmationModal'
+import { useState, useMemo, useEffect } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { jobTitles, experienceLevels } from "../data/mockData";
+import { useJobs } from "../context/JobContext";
+import { useJobsData } from "../contexts/JobsDataContext";
+import { useAuth } from "../context/AuthContext";
+import RefreshButton from "../components/RefreshButton";
+import ApplyJobModal from "../components/ApplyJobModal";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 const Jobs = () => {
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [locationFilter, setLocationFilter] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('')
-  const [experienceFilter, setExperienceFilter] = useState('')
-  const [workTypeFilter, setWorkTypeFilter] = useState('')
-  const [salaryMinFilter, setSalaryMinFilter] = useState('')
-  const [remoteOnly, setRemoteOnly] = useState(false)
-  const [sortBy, setSortBy] = useState('recent')
-  const [currentPage, setCurrentPage] = useState(1)
-  const jobsPerPage = 20
-  const [notification, setNotification] = useState(null)
-  const [showApplyModal, setShowApplyModal] = useState(false)
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false)
-  const [selectedJob, setSelectedJob] = useState(null)
-  
-  const { applyForJob, saveJob, unsaveJob, isJobApplied, isJobSaved, withdrawApplication, getAllJobsSync } = useJobs()
-  const { jobs: apiJobs, loading: jobsLoading, error: jobsError } = useJobsData()
-  const { isAuthenticated, isJobSeeker, isEmployer, user } = useAuth()
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [experienceFilter, setExperienceFilter] = useState("");
+  const [workTypeFilter, setWorkTypeFilter] = useState("");
+  const [salaryMinFilter, setSalaryMinFilter] = useState("");
+  const [remoteOnly, setRemoteOnly] = useState(false);
+  const [sortBy, setSortBy] = useState("recent");
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobsPerPage = 20;
+  const [notification, setNotification] = useState(null);
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  const {
+    applyForJob,
+    saveJob,
+    unsaveJob,
+    isJobApplied,
+    isJobSaved,
+    withdrawApplication,
+    getAllJobsSync,
+  } = useJobs();
+  const {
+    jobs: apiJobs,
+    loading: jobsLoading,
+    error: jobsError,
+  } = useJobsData();
+  const { isAuthenticated, isJobSeeker, isEmployer, user } = useAuth();
 
   // Get all jobs including API jobs and user posted jobs
   const allJobs = useMemo(() => {
-    return getAllJobsSync(apiJobs)
-  }, [apiJobs, getAllJobsSync])
+    return getAllJobsSync(apiJobs);
+  }, [apiJobs, getAllJobsSync]);
 
   // Initialize filters from URL parameters
   useEffect(() => {
-    const searchParam = searchParams.get('search')
-    const locationParam = searchParams.get('location')
-    const companyParam = searchParams.get('company')
-    
-    if (searchParam) setSearchTerm(searchParam)
-    if (locationParam) setLocationFilter(locationParam)
-    if (companyParam) setSearchTerm(companyParam) // Search by company name
-  }, [searchParams])
+    const searchParam = searchParams.get("search");
+    const locationParam = searchParams.get("location");
+    const companyParam = searchParams.get("company");
+
+    if (searchParam) setSearchTerm(searchParam);
+    if (locationParam) setLocationFilter(locationParam);
+    if (companyParam) setSearchTerm(companyParam); // Search by company name
+  }, [searchParams]);
 
   const filteredJobs = useMemo(() => {
-    let filtered = allJobs.filter(job => {
-      const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           job.company.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesLocation = !locationFilter || job.location.toLowerCase().includes(locationFilter.toLowerCase())
-      const matchesCategory = !categoryFilter || job.category === categoryFilter
-      const matchesExperience = !experienceFilter || job.experienceLevel === experienceFilter
-      const matchesWorkType = !workTypeFilter || job.workType === workTypeFilter
-      const matchesSalary = !salaryMinFilter || job.salary.min >= parseInt(salaryMinFilter)
-      const matchesRemote = !remoteOnly || job.remote
+    let filtered = allJobs.filter((job) => {
+      const matchesSearch =
+        job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.company.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesLocation =
+        !locationFilter ||
+        job.location.toLowerCase().includes(locationFilter.toLowerCase());
+      const matchesCategory =
+        !categoryFilter || job.category === categoryFilter;
+      const matchesExperience =
+        !experienceFilter || job.experienceLevel === experienceFilter;
+      const matchesWorkType =
+        !workTypeFilter || job.workType === workTypeFilter;
+      const matchesSalary =
+        !salaryMinFilter || job.salary.min >= parseInt(salaryMinFilter);
+      const matchesRemote = !remoteOnly || job.remote;
 
-      return matchesSearch && matchesLocation && matchesCategory && 
-             matchesExperience && matchesWorkType && matchesSalary && matchesRemote
-    })
+      return (
+        matchesSearch &&
+        matchesLocation &&
+        matchesCategory &&
+        matchesExperience &&
+        matchesWorkType &&
+        matchesSalary &&
+        matchesRemote
+      );
+    });
 
     // Sort filtered jobs
     switch (sortBy) {
-      case 'recent':
-        filtered.sort((a, b) => new Date(b.postedDate) - new Date(a.postedDate))
-        break
-      case 'salary-high':
-        filtered.sort((a, b) => b.salary.max - a.salary.max)
-        break
-      case 'salary-low':
-        filtered.sort((a, b) => a.salary.min - b.salary.min)
-        break
-      case 'company':
-        filtered.sort((a, b) => a.company.localeCompare(b.company))
-        break
+      case "recent":
+        filtered.sort(
+          (a, b) => new Date(b.postedDate) - new Date(a.postedDate)
+        );
+        break;
+      case "salary-high":
+        filtered.sort((a, b) => b.salary.max - a.salary.max);
+        break;
+      case "salary-low":
+        filtered.sort((a, b) => a.salary.min - b.salary.min);
+        break;
+      case "company":
+        filtered.sort((a, b) => a.company.localeCompare(b.company));
+        break;
       default:
-        break
+        break;
     }
 
-    return filtered
-  }, [allJobs, searchTerm, locationFilter, categoryFilter, experienceFilter, workTypeFilter, salaryMinFilter, remoteOnly, sortBy])
+    return filtered;
+  }, [
+    allJobs,
+    searchTerm,
+    locationFilter,
+    categoryFilter,
+    experienceFilter,
+    workTypeFilter,
+    salaryMinFilter,
+    remoteOnly,
+    sortBy,
+  ]);
 
-  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage)
-  const paginatedJobs = filteredJobs.slice((currentPage - 1) * jobsPerPage, currentPage * jobsPerPage)
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
+  const paginatedJobs = filteredJobs.slice(
+    (currentPage - 1) * jobsPerPage,
+    currentPage * jobsPerPage
+  );
 
   const resetFilters = () => {
-    setSearchTerm('')
-    setLocationFilter('')
-    setCategoryFilter('')
-    setExperienceFilter('')
-    setWorkTypeFilter('')
-    setSalaryMinFilter('')
-    setRemoteOnly(false)
-    setCurrentPage(1)
-  }
+    setSearchTerm("");
+    setLocationFilter("");
+    setCategoryFilter("");
+    setExperienceFilter("");
+    setWorkTypeFilter("");
+    setSalaryMinFilter("");
+    setRemoteOnly(false);
+    setCurrentPage(1);
+  };
 
-  const showNotification = (message, type = 'success') => {
-    setNotification({ message, type })
-    setTimeout(() => setNotification(null), 3000)
-  }
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const handleQuickApply = (job) => {
-    if (!isAuthenticated || !isJobSeeker) return
-    setSelectedJob(job)
-    setShowApplyModal(true)
-  }
+    if (!isAuthenticated || !isJobSeeker) return;
+    setSelectedJob(job);
+    setShowApplyModal(true);
+  };
 
   const confirmApply = async (coverLetter) => {
-    if (!selectedJob) return
+    if (!selectedJob) return;
 
-    const result = await applyForJob(selectedJob, coverLetter)
+    const result = await applyForJob(selectedJob, coverLetter);
     if (result.success) {
-      showNotification(result.message, 'success')
+      showNotification(result.message, "success");
     } else {
       if (result.requiresProfile) {
-        showNotification(result.error, 'error')
+        showNotification(result.error, "error");
         setTimeout(() => {
-          navigate('/profile')
-        }, 2000)
+          navigate("/profile");
+        }, 2000);
       } else {
-        showNotification(result.error, 'error')
+        showNotification(result.error, "error");
       }
     }
-    setSelectedJob(null)
-  }
+    setSelectedJob(null);
+  };
 
   const handleWithdraw = (job) => {
-    setSelectedJob(job)
-    setShowWithdrawModal(true)
-  }
+    setSelectedJob(job);
+    setShowWithdrawModal(true);
+  };
 
   const confirmWithdraw = async () => {
-    if (!selectedJob) return
+    if (!selectedJob) return;
 
-    const result = await withdrawApplication(selectedJob.id)
+    const result = await withdrawApplication(selectedJob.id);
     if (result.success) {
-      showNotification(result.message, 'success')
+      showNotification(result.message, "success");
     } else {
-      showNotification(result.error, 'error')
+      showNotification(result.error, "error");
     }
-    setSelectedJob(null)
-  }
+    setSelectedJob(null);
+  };
 
   const handleSaveToggle = async (job) => {
-    if (!isAuthenticated || !isJobSeeker) return
+    if (!isAuthenticated || !isJobSeeker) return;
 
-    const isSaved = isJobSaved(job.id)
-    const result = isSaved ? await unsaveJob(job.id) : await saveJob(job)
+    const isSaved = isJobSaved(job.id);
+    const result = isSaved ? await unsaveJob(job.id) : await saveJob(job);
 
     if (result.success) {
-      showNotification(result.message, 'success')
+      showNotification(result.message, "success");
     } else {
-      showNotification(result.error, 'error')
+      showNotification(result.error, "error");
     }
-  }
+  };
 
   const formatSalary = (min, max) => {
-    return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`
-  }
+    return `$${(min / 1000).toFixed(0)}k - $${(max / 1000).toFixed(0)}k`;
+  };
 
   const getTimeAgo = (dateString) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60))
-    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor((now - date) / (1000 * 60 * 60));
+
     if (diffInHours < 24) {
-      return `${diffInHours}h ago`
+      return `${diffInHours}h ago`;
     } else {
-      const diffInDays = Math.floor(diffInHours / 24)
-      return `${diffInDays}d ago`
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays}d ago`;
     }
-  }
+  };
 
   // Show loading state
   if (jobsLoading) {
@@ -179,10 +220,12 @@ const Jobs = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 pt-20 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading jobs...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            Loading jobs...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   // Show error state
@@ -191,11 +234,13 @@ const Jobs = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 pt-20 flex items-center justify-center">
         <div className="text-center">
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Error Loading Jobs</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Error Loading Jobs
+          </h2>
           <p className="text-gray-600 dark:text-gray-400">{jobsError}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -206,7 +251,7 @@ const Jobs = () => {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary-400 to-purple-600 rounded-full opacity-10 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-400 to-purple-600 rounded-full opacity-10 blur-3xl"></div>
         </div>
-        
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-black text-gray-900 dark:text-white mb-6">
@@ -215,7 +260,8 @@ const Jobs = () => {
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-6">
-              Explore {allJobs.length} job opportunities from top companies worldwide
+              Explore {allJobs.length} job opportunities from top companies
+              worldwide
             </p>
             <div className="flex justify-center">
               <RefreshButton />
@@ -229,8 +275,18 @@ const Jobs = () => {
               <div className="flex flex-col lg:flex-row gap-4 mb-6">
                 <div className="flex-1">
                   <div className="relative">
-                    <svg className="absolute left-4 top-4 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      className="absolute left-4 top-4 h-6 w-6 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                     <input
                       type="text"
@@ -243,9 +299,24 @@ const Jobs = () => {
                 </div>
                 <div className="flex-1">
                   <div className="relative">
-                    <svg className="absolute left-4 top-4 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg
+                      className="absolute left-4 top-4 h-6 w-6 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
                     </svg>
                     <input
                       type="text"
@@ -266,8 +337,10 @@ const Jobs = () => {
                   onChange={(e) => setCategoryFilter(e.target.value)}
                 >
                   <option value="">All Categories</option>
-                  {Object.keys(jobTitles).map(category => (
-                    <option key={category} value={category}>{category}</option>
+                  {Object.keys(jobTitles).map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
                   ))}
                 </select>
 
@@ -277,8 +350,10 @@ const Jobs = () => {
                   onChange={(e) => setExperienceFilter(e.target.value)}
                 >
                   <option value="">All Experience</option>
-                  {experienceLevels.map(level => (
-                    <option key={level} value={level}>{level}</option>
+                  {experienceLevels.map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
                   ))}
                 </select>
 
@@ -312,12 +387,24 @@ const Jobs = () => {
                       checked={remoteOnly}
                       onChange={(e) => setRemoteOnly(e.target.checked)}
                     />
-                    <div className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${remoteOnly ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`}>
-                      <div className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-300 ${remoteOnly ? 'transform translate-x-6' : ''}`}></div>
+                    <div
+                      className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${
+                        remoteOnly
+                          ? "bg-primary-600"
+                          : "bg-gray-300 dark:bg-gray-600"
+                      }`}
+                    >
+                      <div
+                        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-300 ${
+                          remoteOnly ? "transform translate-x-6" : ""
+                        }`}
+                      ></div>
                     </div>
-                    <span className="ml-3 text-gray-700 dark:text-gray-300 font-medium">Remote Only</span>
+                    <span className="ml-3 text-gray-700 dark:text-gray-300 font-medium">
+                      Remote Only
+                    </span>
                   </label>
-                  
+
                   <button
                     onClick={resetFilters}
                     className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
@@ -327,7 +414,9 @@ const Jobs = () => {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <span className="text-gray-600 dark:text-gray-400">Sort by:</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    Sort by:
+                  </span>
                   <select
                     className="px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                     value={sortBy}
@@ -353,24 +442,43 @@ const Jobs = () => {
               {filteredJobs.length} Jobs Found
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Showing {((currentPage - 1) * jobsPerPage) + 1}-{Math.min(currentPage * jobsPerPage, filteredJobs.length)} of {filteredJobs.length} results
+              Showing {(currentPage - 1) * jobsPerPage + 1}-
+              {Math.min(currentPage * jobsPerPage, filteredJobs.length)} of{" "}
+              {filteredJobs.length} results
             </p>
           </div>
         </div>
 
         {/* Notification */}
         {notification && (
-          <div className={`mb-6 p-4 rounded-xl border ${
-            notification.type === 'success' 
-              ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
-              : 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
-          }`}>
+          <div
+            className={`mb-6 p-4 rounded-xl border ${
+              notification.type === "success"
+                ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200"
+                : "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200"
+            }`}
+          >
             <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {notification.type === 'success' ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {notification.type === "success" ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L12.732 4.5c-.77-.833-2.186-.833-2.954 0L2.857 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L12.732 4.5c-.77-.833-2.186-.833-2.954 0L2.857 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
                 )}
               </svg>
               {notification.message}
@@ -395,8 +503,8 @@ const Jobs = () => {
                         alt={`${job.company} logo`}
                         className="w-12 h-12 object-contain"
                         onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextSibling.style.display = 'flex';
+                          e.target.style.display = "none";
+                          e.target.nextSibling.style.display = "flex";
                         }}
                       />
                       <div className="text-xl font-bold text-primary-600 dark:text-primary-400 hidden w-12 h-12 items-center justify-center">
@@ -413,9 +521,24 @@ const Jobs = () => {
                         <span className="font-semibold">{job.company}</span>
                         <span>•</span>
                         <span className="flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <svg
+                            className="w-4 h-4 mr-1"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
                           </svg>
                           {job.location}
                         </span>
@@ -423,13 +546,15 @@ const Jobs = () => {
                         <span>{job.jobType}</span>
                       </div>
                       <div className="flex flex-wrap gap-2 mb-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          job.workType === 'Remote' 
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                            : job.workType === 'Hybrid'
-                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
-                        }`}>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            job.workType === "Remote"
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                              : job.workType === "Hybrid"
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                              : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                          }`}
+                        >
                           {job.workType}
                         </span>
                         <span className="bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300 px-3 py-1 rounded-full text-xs font-semibold">
@@ -458,9 +583,10 @@ const Jobs = () => {
                     {formatSalary(job.salary.min, job.salary.max)}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    {getTimeAgo(job.postedDate)} • {job.applicationsCount} applicants
+                    {getTimeAgo(job.postedDate)} • {job.applicationsCount}{" "}
+                    applicants
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row lg:flex-col gap-2">
                     {!isEmployer && (
@@ -468,9 +594,9 @@ const Jobs = () => {
                         {isJobApplied(job.id) ? (
                           <button
                             onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              handleWithdraw(job)
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleWithdraw(job);
                             }}
                             className="px-4 py-2 rounded-xl font-semibold transition-colors text-sm border-2 border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                           >
@@ -479,55 +605,70 @@ const Jobs = () => {
                         ) : (
                           <button
                             onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
+                              e.preventDefault();
+                              e.stopPropagation();
                               if (!isAuthenticated) {
-                                navigate('/login', { state: { from: { pathname: '/jobs' } } })
-                                return
+                                navigate("/login", {
+                                  state: { from: { pathname: "/jobs" } },
+                                });
+                                return;
                               }
-                              handleQuickApply(job)
+                              handleQuickApply(job);
                             }}
-                            disabled={isAuthenticated && isJobSeeker && !user?.profileComplete}
+                            disabled={
+                              isAuthenticated &&
+                              isJobSeeker &&
+                              !user?.profileComplete
+                            }
                             className={`px-4 py-2 rounded-xl font-semibold transition-colors text-sm ${
-                              (isAuthenticated && isJobSeeker && !user?.profileComplete)
-                                ? 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-primary-600 to-purple-600 text-white hover:from-primary-700 hover:to-purple-700'
+                              isAuthenticated &&
+                              isJobSeeker &&
+                              !user?.profileComplete
+                                ? "bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed"
+                                : "bg-gradient-to-r from-primary-600 to-purple-600 text-white hover:from-primary-700 hover:to-purple-700"
                             }`}
                           >
                             {!isAuthenticated
-                              ? 'Login to Apply'
+                              ? "Login to Apply"
                               : !isJobSeeker
-                              ? 'Job Seekers Only'
+                              ? "Job Seekers Only"
                               : !user?.profileComplete
-                              ? 'Complete Profile'
-                              : 'Quick Apply'
-                            }
+                              ? "Complete Profile"
+                              : "Quick Apply"}
                           </button>
                         )}
-                        
+
                         <button
                           onClick={(e) => {
-                            e.preventDefault()
-                            e.stopPropagation()
+                            e.preventDefault();
+                            e.stopPropagation();
                             if (!isAuthenticated) {
-                              navigate('/login', { state: { from: { pathname: '/jobs' } } })
-                              return
+                              navigate("/login", {
+                                state: { from: { pathname: "/jobs" } },
+                              });
+                              return;
                             }
-                            handleSaveToggle(job)
+                            handleSaveToggle(job);
                           }}
                           className={`px-4 py-2 rounded-xl font-semibold transition-colors text-sm border-2 ${
                             isJobSaved(job.id)
-                              ? 'border-red-500 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'
-                              : (!isAuthenticated || !isJobSeeker)
-                              ? 'border-gray-200 text-gray-600 dark:border-gray-600 dark:text-gray-400'
-                              : 'border-gray-200 text-gray-700 dark:border-gray-600 dark:text-gray-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400'
+                              ? "border-red-500 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400"
+                              : !isAuthenticated || !isJobSeeker
+                              ? "border-gray-200 text-gray-600 dark:border-gray-600 dark:text-gray-400"
+                              : "border-gray-200 text-gray-700 dark:border-gray-600 dark:text-gray-300 hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
                           }`}
                         >
-                          {isJobSaved(job.id) ? '❤️ Saved' : (!isAuthenticated ? '❤️ Login to Save' : !isJobSeeker ? '❤️ Job Seekers Only' : '❤️ Save')}
+                          {isJobSaved(job.id)
+                            ? "❤️ Saved"
+                            : !isAuthenticated
+                            ? "❤️ Login to Save"
+                            : !isJobSeeker
+                            ? "❤️ Job Seekers Only"
+                            : "❤️ Save"}
                         </button>
                       </>
                     )}
-                    
+
                     <Link
                       to={`/jobs/${job.id}`}
                       className="px-4 py-2 border border-primary-600 text-primary-600 dark:text-primary-400 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors font-semibold text-center text-sm"
@@ -549,37 +690,59 @@ const Jobs = () => {
               disabled={currentPage === 1}
               className="px-4 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
 
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = Math.max(1, currentPage - 2) + i
-              if (pageNum > totalPages) return null
-              
+              const pageNum = Math.max(1, currentPage - 2) + i;
+              if (pageNum > totalPages) return null;
+
               return (
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
                   className={`px-4 py-2 rounded-xl font-semibold transition-colors ${
                     currentPage === pageNum
-                      ? 'bg-primary-600 text-white'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                      ? "bg-primary-600 text-white"
+                      : "text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
                   }`}
                 >
                   {pageNum}
                 </button>
-              )
+              );
             })}
 
             <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
               className="px-4 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </div>
@@ -608,7 +771,7 @@ const Jobs = () => {
         type="danger"
       />
     </div>
-  )
-}
+  );
+};
 
-export default Jobs
+export default Jobs;

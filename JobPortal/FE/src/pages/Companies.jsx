@@ -1,100 +1,137 @@
-import { useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { useCompanies } from '../contexts/CompaniesContext'
-import { useJobsData } from '../contexts/JobsDataContext'
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useCompanies } from "../contexts/CompaniesContext";
+import { useJobsData } from "../contexts/JobsDataContext";
 
 const Companies = () => {
-  const { companies, loading, error, refetch } = useCompanies()
-  const { jobs } = useJobsData()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [industryFilter, setIndustryFilter] = useState('')
-  const [sizeFilter, setSizeFilter] = useState('')
-  const [locationFilter, setLocationFilter] = useState('')
-  const [ratingFilter, setRatingFilter] = useState('')
-  const [sortBy, setSortBy] = useState('name')
-  const [currentPage, setCurrentPage] = useState(1)
-  const companiesPerPage = 12
+  const { companies, loading, error, refetch } = useCompanies();
+  const { jobs } = useJobsData();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [industryFilter, setIndustryFilter] = useState("");
+  const [sizeFilter, setSizeFilter] = useState("");
+  const [locationFilter, setLocationFilter] = useState("");
+  const [ratingFilter, setRatingFilter] = useState("");
+  const [sortBy, setSortBy] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
+  const companiesPerPage = 12;
 
   // Get unique industries, sizes, and locations for filters
-  const industries = [...new Set(companies.map(company => company.industry))].sort()
-  const sizes = [...new Set(companies.map(company => company.size))].sort()
-  const locations = [...new Set(companies.flatMap(company => company.locations))].sort()
+  const industries = [
+    ...new Set(companies.map((company) => company.industry)),
+  ].sort();
+  const sizes = [...new Set(companies.map((company) => company.size))].sort();
 
   // Enhanced companies with job counts
   const enhancedCompanies = useMemo(() => {
-    return companies.map(company => {
-      const jobCount = jobs.filter(job => job.company === company.name).length
-      return { ...company, jobCount }
-    })
-  }, [companies, jobs])
+    return companies.map((company) => {
+      const jobCount = jobs.filter(
+        (job) => job.company === company.name
+      ).length;
+      return { ...company, jobCount };
+    });
+  }, [companies, jobs]);
 
   const filteredCompanies = useMemo(() => {
-    let filtered = enhancedCompanies.filter(company => {
-      const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           company.industry.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesIndustry = !industryFilter || company.industry === industryFilter
-      const matchesSize = !sizeFilter || company.size === sizeFilter
-      const matchesLocation = !locationFilter || company.locations.some(loc => 
-        loc.toLowerCase().includes(locationFilter.toLowerCase())
-      )
-      const matchesRating = !ratingFilter || company.rating >= parseFloat(ratingFilter)
+    let filtered = enhancedCompanies.filter((company) => {
+      const matchesSearch =
+        company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        company.industry.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesIndustry =
+        !industryFilter || company.industry === industryFilter;
+      const matchesSize = !sizeFilter || company.size === sizeFilter;
+      const matchesLocation =
+        !locationFilter ||
+        company.locations.some((loc) =>
+          loc.toLowerCase().includes(locationFilter.toLowerCase())
+        );
+      const matchesRating =
+        !ratingFilter || company.rating >= parseFloat(ratingFilter);
 
-      return matchesSearch && matchesIndustry && matchesSize && matchesLocation && matchesRating
-    })
+      return (
+        matchesSearch &&
+        matchesIndustry &&
+        matchesSize &&
+        matchesLocation &&
+        matchesRating
+      );
+    });
 
     // Sort filtered companies
     switch (sortBy) {
-      case 'name':
-        filtered.sort((a, b) => a.name.localeCompare(b.name))
-        break
-      case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating)
-        break
-      case 'jobs':
-        filtered.sort((a, b) => b.jobCount - a.jobCount)
-        break
-      case 'founded':
-        filtered.sort((a, b) => b.founded - a.founded)
-        break
+      case "name":
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
+        break;
+      case "rating":
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case "jobs":
+        filtered.sort((a, b) => b.jobCount - a.jobCount);
+        break;
+      case "founded":
+        filtered.sort((a, b) => b.founded - a.founded);
+        break;
       default:
-        break
+        break;
     }
 
-    return filtered
-  }, [enhancedCompanies, searchTerm, industryFilter, sizeFilter, locationFilter, ratingFilter, sortBy])
+    return filtered;
+  }, [
+    enhancedCompanies,
+    searchTerm,
+    industryFilter,
+    sizeFilter,
+    locationFilter,
+    ratingFilter,
+    sortBy,
+  ]);
 
-  const totalPages = Math.ceil(filteredCompanies.length / companiesPerPage)
-  const paginatedCompanies = filteredCompanies.slice((currentPage - 1) * companiesPerPage, currentPage * companiesPerPage)
+  const totalPages = Math.ceil(filteredCompanies.length / companiesPerPage);
+  const paginatedCompanies = filteredCompanies.slice(
+    (currentPage - 1) * companiesPerPage,
+    currentPage * companiesPerPage
+  );
 
   const resetFilters = () => {
-    setSearchTerm('')
-    setIndustryFilter('')
-    setSizeFilter('')
-    setLocationFilter('')
-    setRatingFilter('')
-    setCurrentPage(1)
-  }
+    setSearchTerm("");
+    setIndustryFilter("");
+    setSizeFilter("");
+    setLocationFilter("");
+    setRatingFilter("");
+    setCurrentPage(1);
+  };
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 >= 0.5
-    const stars = []
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = [];
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<span key={i} className="text-yellow-400">★</span>)
+      stars.push(
+        <span key={i} className="text-yellow-400">
+          ★
+        </span>
+      );
     }
 
     if (hasHalfStar) {
-      stars.push(<span key="half" className="text-yellow-400">☆</span>)
+      stars.push(
+        <span key="half" className="text-yellow-400">
+          ☆
+        </span>
+      );
     }
 
-    const emptyStars = 5 - Math.ceil(rating)
+    const emptyStars = 5 - Math.ceil(rating);
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<span key={`empty-${i}`} className="text-gray-300">☆</span>)
+      stars.push(
+        <span key={`empty-${i}`} className="text-gray-300">
+          ☆
+        </span>
+      );
     }
 
-    return stars
-  }
+    return stars;
+  };
 
   // Show loading state
   if (loading) {
@@ -102,10 +139,12 @@ const Companies = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 pt-20 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-xl text-gray-600 dark:text-gray-300">Loading companies...</p>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
+            Loading companies...
+          </p>
         </div>
       </div>
-    )
+    );
   }
 
   // Show error state
@@ -114,7 +153,9 @@ const Companies = () => {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 pt-20 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-4">
           <div className="text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Error Loading Companies</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Error Loading Companies
+          </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
           <button
             onClick={refetch}
@@ -124,7 +165,7 @@ const Companies = () => {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -135,7 +176,7 @@ const Companies = () => {
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary-400 to-purple-600 rounded-full opacity-10 blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-400 to-purple-600 rounded-full opacity-10 blur-3xl"></div>
         </div>
-        
+
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-black text-gray-900 dark:text-white mb-6">
@@ -144,7 +185,8 @@ const Companies = () => {
               </span>
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Discover {companies.length} amazing companies actively hiring top talent
+              Discover {companies.length} amazing companies actively hiring top
+              talent
             </p>
           </div>
 
@@ -155,8 +197,18 @@ const Companies = () => {
               <div className="flex flex-col lg:flex-row gap-4 mb-6">
                 <div className="flex-1">
                   <div className="relative">
-                    <svg className="absolute left-4 top-4 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    <svg
+                      className="absolute left-4 top-4 h-6 w-6 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
                     </svg>
                     <input
                       type="text"
@@ -169,9 +221,24 @@ const Companies = () => {
                 </div>
                 <div className="flex-1">
                   <div className="relative">
-                    <svg className="absolute left-4 top-4 h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <svg
+                      className="absolute left-4 top-4 h-6 w-6 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
                     </svg>
                     <input
                       type="text"
@@ -192,8 +259,10 @@ const Companies = () => {
                   onChange={(e) => setIndustryFilter(e.target.value)}
                 >
                   <option value="">All Industries</option>
-                  {industries.map(industry => (
-                    <option key={industry} value={industry}>{industry}</option>
+                  {industries.map((industry) => (
+                    <option key={industry} value={industry}>
+                      {industry}
+                    </option>
                   ))}
                 </select>
 
@@ -203,8 +272,10 @@ const Companies = () => {
                   onChange={(e) => setSizeFilter(e.target.value)}
                 >
                   <option value="">All Sizes</option>
-                  {sizes.map(size => (
-                    <option key={size} value={size}>{size}</option>
+                  {sizes.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
                   ))}
                 </select>
 
@@ -240,7 +311,7 @@ const Companies = () => {
                 >
                   Clear All Filters
                 </button>
-                
+
                 <div className="text-gray-600 dark:text-gray-400">
                   {filteredCompanies.length} companies found
                 </div>
@@ -257,7 +328,9 @@ const Companies = () => {
             {filteredCompanies.length} Companies Found
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            Showing {((currentPage - 1) * companiesPerPage) + 1}-{Math.min(currentPage * companiesPerPage, filteredCompanies.length)} of {filteredCompanies.length} results
+            Showing {(currentPage - 1) * companiesPerPage + 1}-
+            {Math.min(currentPage * companiesPerPage, filteredCompanies.length)}{" "}
+            of {filteredCompanies.length} results
           </p>
         </div>
 
@@ -266,7 +339,10 @@ const Companies = () => {
           {paginatedCompanies.map((company, index) => (
             <Link
               key={company.name}
-              to={`/companies/${company.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`}
+              to={`/companies/${company.name
+                .toLowerCase()
+                .replace(/\s+/g, "-")
+                .replace(/[^a-z0-9-]/g, "")}`}
               className="group block bg-white dark:bg-gray-800 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 p-8 border-2 border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-600 transform hover:scale-105 hover:-translate-y-2"
               style={{ animationDelay: `${index * 100}ms` }}
             >
@@ -277,8 +353,8 @@ const Companies = () => {
                     alt={`${company.name} logo`}
                     className="w-16 h-16 object-contain group-hover:scale-110 transition-transform duration-300"
                     onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
                     }}
                   />
                   <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-purple-100 dark:from-primary-900/30 dark:to-purple-900/30 rounded-xl flex items-center justify-center text-2xl font-bold text-primary-600 dark:text-primary-400 hidden">
@@ -288,8 +364,10 @@ const Companies = () => {
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-2">
                   {company.name}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">{company.industry}</p>
-                
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  {company.industry}
+                </p>
+
                 <div className="flex justify-center items-center mb-4">
                   <div className="flex items-center mr-2">
                     {renderStars(company.rating)}
@@ -302,13 +380,19 @@ const Companies = () => {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Company Size</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{company.size}</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Company Size
+                  </span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {company.size}
+                  </span>
                 </div>
 
                 {company.employees && (
                   <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Employees</span>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Employees
+                    </span>
                     <span className="font-semibold text-gray-900 dark:text-white">
                       {company.employees.toLocaleString()}
                     </span>
@@ -316,22 +400,33 @@ const Companies = () => {
                 )}
 
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Open Jobs</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Open Jobs
+                  </span>
                   <span className="font-semibold text-primary-600 dark:text-primary-400">
                     {company.jobCount} positions
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Founded</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{company.founded}</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    Founded
+                  </span>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {company.founded}
+                  </span>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Locations</div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                    Locations
+                  </div>
                   <div className="flex flex-wrap gap-1">
                     {company.locations.slice(0, 3).map((location, idx) => (
-                      <span key={idx} className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-xs">
+                      <span
+                        key={idx}
+                        className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-lg text-xs"
+                      >
                         {location}
                       </span>
                     ))}
@@ -346,9 +441,21 @@ const Companies = () => {
 
               <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">View Company</span>
-                  <svg className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    View Company
+                  </span>
+                  <svg
+                    className="w-4 h-4 text-primary-600 dark:text-primary-400 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </div>
               </div>
@@ -364,44 +471,66 @@ const Companies = () => {
               disabled={currentPage === 1}
               className="px-4 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
             </button>
 
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const pageNum = Math.max(1, currentPage - 2) + i
-              if (pageNum > totalPages) return null
-              
+              const pageNum = Math.max(1, currentPage - 2) + i;
+              if (pageNum > totalPages) return null;
+
               return (
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
                   className={`px-4 py-2 rounded-xl font-semibold transition-colors ${
                     currentPage === pageNum
-                      ? 'bg-primary-600 text-white'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                      ? "bg-primary-600 text-white"
+                      : "text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
                   }`}
                 >
                   {pageNum}
                 </button>
-              )
+              );
             })}
 
             <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
               className="px-4 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </button>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Companies
+export default Companies;

@@ -10,7 +10,6 @@ import {
 const Profile = () => {
   const {
     user,
-    updateProfile,
     updateProfileComplete,
     isJobSeeker,
     isLoading: authLoading,
@@ -35,7 +34,6 @@ const Profile = () => {
 
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
-  const [skillInput, setSkillInput] = useState("");
   const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("basic");
@@ -124,7 +122,7 @@ const Profile = () => {
     if (user) {
       loadProfile();
     }
-  }, [user?.userId, isJobSeeker, navigate, authLoading]);
+  }, [user, isJobSeeker, navigate, authLoading]);
 
   const showNotification = (message, type = "success") => {
     setNotification({ message, type });
@@ -170,88 +168,15 @@ const Profile = () => {
     }
   };
 
-  const addSkill = () => {
-    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
-      setFormData((prev) => ({
-        ...prev,
-        skills: [...prev.skills, skillInput.trim()],
-      }));
-      setSkillInput("");
-    }
-  };
-
-  const removeSkill = (skillToRemove) => {
-    setFormData((prev) => ({
-      ...prev,
-      skills: prev.skills.filter((skill) => skill !== skillToRemove),
-    }));
-  };
-
-  const addEducation = () => {
-    setFormData((prev) => ({
-      ...prev,
-      education: [
-        ...prev.education,
-        {
-          id: Date.now(),
-          degree: "",
-          institution: "",
-          year: "",
-          description: "",
-        },
-      ],
-    }));
-  };
-
-  const updateEducation = (id, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      education: prev.education.map((edu) =>
-        edu.id === id ? { ...edu, [field]: value } : edu
-      ),
-    }));
-  };
-
-  const removeEducation = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      education: prev.education.filter((edu) => edu.id !== id),
-    }));
-  };
-
-  const addWorkHistory = () => {
-    setFormData((prev) => ({
-      ...prev,
-      workHistory: [
-        ...prev.workHistory,
-        {
-          id: Date.now(),
-          company: "",
-          position: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-          current: false,
-        },
-      ],
-    }));
-  };
-
-  const updateWorkHistory = (id, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      workHistory: prev.workHistory.map((work) =>
-        work.id === id ? { ...work, [field]: value } : work
-      ),
-    }));
-  };
-
-  const removeWorkHistory = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      workHistory: prev.workHistory.filter((work) => work.id !== id),
-    }));
-  };
+  // const addSkill = () => {
+  //   if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       skills: [...prev.skills, skillInput.trim()],
+  //     }));
+  //     setSkillInput("");
+  //   }
+  // };
 
   const validateProfile = () => {
     const required = [

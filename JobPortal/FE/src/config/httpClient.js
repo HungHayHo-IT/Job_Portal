@@ -131,7 +131,7 @@ httpClient.interceptors.response.use(
       });
 
       switch (error.response.status) {
-        case 401:
+        case 401: {
           const isLoginRequest = error.config.url.includes("/auth/login");
           const isOnLoginPage = window.location.pathname === "/login";
 
@@ -143,7 +143,9 @@ httpClient.interceptors.response.use(
             localStorage.removeItem("authToken");
             localStorage.removeItem("jobPortalUser");
           }
+
           break;
+        }
         case 403:
           console.error("Access forbidden");
           break;

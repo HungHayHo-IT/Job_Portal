@@ -90,7 +90,7 @@ const Contact = () => {
 
     try {
       // Submit contact form to backend API
-      const response = await submitContactForm(formData);
+      await submitContactForm(formData);
 
       setIsSubmitting(false);
       setSubmitSuccess(true);

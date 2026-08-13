@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "../../context/ThemeContext";
 import httpClient from "../../config/httpClient";
 import { API_ENDPOINTS } from "../../config/api";
 
 const CompanyManagement = () => {
-  const { theme } = useTheme();
   const [companies, setCompanies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingCompanyId, setEditingCompanyId] = useState(null);

@@ -1,17 +1,21 @@
-import { Link } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
-import { useCompanies } from '../../contexts/CompaniesContext';
+import { Link } from "react-router-dom";
+
+import { useCompanies } from "../../contexts/CompaniesContext";
 
 const Dashboard = () => {
-  const { theme } = useTheme();
   const { companies } = useCompanies();
 
   const adminCards = [
     {
-      title: 'Company Management',
-      description: 'Create, edit, and manage companies in the system',
+      title: "Company Management",
+      description: "Create, edit, and manage companies in the system",
       icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -20,18 +24,23 @@ const Dashboard = () => {
           />
         </svg>
       ),
-      link: '/admin/companies',
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-      textColor: 'text-blue-600 dark:text-blue-400',
+      link: "/admin/companies",
+      color: "from-blue-500 to-blue-600",
+      bgColor: "bg-blue-50 dark:bg-blue-900/20",
+      textColor: "text-blue-600 dark:text-blue-400",
       count: companies.length,
-      countLabel: 'Total Companies'
+      countLabel: "Total Companies",
     },
     {
-      title: 'Employer Management',
-      description: 'Assign employers to companies and manage relationships',
+      title: "Employer Management",
+      description: "Assign employers to companies and manage relationships",
       icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -40,16 +49,21 @@ const Dashboard = () => {
           />
         </svg>
       ),
-      link: '/admin/employers',
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-      textColor: 'text-purple-600 dark:text-purple-400'
+      link: "/admin/employers",
+      color: "from-purple-500 to-purple-600",
+      bgColor: "bg-purple-50 dark:bg-purple-900/20",
+      textColor: "text-purple-600 dark:text-purple-400",
     },
     {
-      title: 'Contact Messages',
-      description: 'View and manage contact form submissions',
+      title: "Contact Messages",
+      description: "View and manage contact form submissions",
       icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -58,11 +72,11 @@ const Dashboard = () => {
           />
         </svg>
       ),
-      link: '/admin/contact-messages',
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-900/20',
-      textColor: 'text-green-600 dark:text-green-400'
-    }
+      link: "/admin/contact-messages",
+      color: "from-green-500 to-green-600",
+      bgColor: "bg-green-50 dark:bg-green-900/20",
+      textColor: "text-green-600 dark:text-green-400",
+    },
   ];
 
   return (
@@ -86,10 +100,10 @@ const Dashboard = () => {
               to={card.link}
               className="group bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:scale-105 transition-all duration-300"
             >
-              <div className={`${card.bgColor} w-16 h-16 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                <div className={card.textColor}>
-                  {card.icon}
-                </div>
+              <div
+                className={`${card.bgColor} w-16 h-16 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+              >
+                <div className={card.textColor}>{card.icon}</div>
               </div>
 
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -113,8 +127,18 @@ const Dashboard = () => {
 
               <div className="flex items-center text-primary-600 dark:text-primary-400 mt-4 group-hover:translate-x-2 transition-transform">
                 <span className="text-sm font-semibold">Manage</span>
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </div>
             </Link>
@@ -125,8 +149,18 @@ const Dashboard = () => {
         <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
           <div className="flex items-start">
             <div className="flex-shrink-0">
-              <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
             <div className="ml-3">
@@ -134,7 +168,9 @@ const Dashboard = () => {
                 Admin Privileges
               </h3>
               <p className="mt-1 text-sm text-blue-700 dark:text-blue-300">
-                As an administrator, you have full access to manage companies, employers, and view all contact messages. Use these tools responsibly to maintain the platform.
+                As an administrator, you have full access to manage companies,
+                employers, and view all contact messages. Use these tools
+                responsibly to maintain the platform.
               </p>
             </div>
           </div>

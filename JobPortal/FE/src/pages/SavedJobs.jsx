@@ -10,7 +10,7 @@ const SavedJobs = () => {
   const [notification, setNotification] = useState(null);
 
   const { savedJobs, unsaveJob, applyForJob, isJobApplied } = useJobs();
-  const { isJobSeeker, isAuthenticated, isLoading: authLoading, user } = useAuth();
+  const { isJobSeeker, isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const formatSalary = (min, max) => {
@@ -30,7 +30,7 @@ const SavedJobs = () => {
     }
   };
 
-  const showNotification = (message, type = 'success') => {
+  const showNotification = (message, type = "success") => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
@@ -50,15 +50,15 @@ const SavedJobs = () => {
 
     const result = await applyForJob(selectedJob, coverLetter);
     if (result.success) {
-      showNotification(result.message, 'success');
+      showNotification(result.message, "success");
     } else {
       if (result.requiresProfile) {
-        showNotification(result.error, 'error');
+        showNotification(result.error, "error");
         setTimeout(() => {
-          navigate('/profile');
+          navigate("/profile");
         }, 2000);
       } else {
-        showNotification(result.error, 'error');
+        showNotification(result.error, "error");
       }
     }
     setSelectedJob(null);
@@ -133,17 +133,34 @@ const SavedJobs = () => {
 
         {/* Notification */}
         {notification && (
-          <div className={`mb-6 p-4 rounded-xl border ${
-            notification.type === 'success'
-              ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
-              : 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
-          }`}>
+          <div
+            className={`mb-6 p-4 rounded-xl border ${
+              notification.type === "success"
+                ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200"
+                : "bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200"
+            }`}
+          >
             <div className="flex items-center">
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {notification.type === 'success' ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {notification.type === "success" ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L12.732 4.5c-.77-.833-2.186-.833-2.954 0L2.857 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L12.732 4.5c-.77-.833-2.186-.833-2.954 0L2.857 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
                 )}
               </svg>
               {notification.message}

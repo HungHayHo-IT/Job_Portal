@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "../../context/ThemeContext";
+
 import httpClient from "../../config/httpClient";
 import { API_ENDPOINTS } from "../../config/api";
 
 const ContactMessages = () => {
-  const { theme } = useTheme();
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedMessageId, setExpandedMessageId] = useState(null);
@@ -29,8 +28,6 @@ const ContactMessages = () => {
     try {
       // Check if user is authenticated
       const token = localStorage.getItem("authToken");
-      const userStr = localStorage.getItem("jobPortalUser");
-      const user = userStr ? JSON.parse(userStr) : null;
 
       if (!token) {
         console.error("No auth token found - user needs to login");

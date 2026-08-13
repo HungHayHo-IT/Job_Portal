@@ -164,7 +164,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = async (email, password, userType) => {
+  const login = async (email, password) => {
     setIsLoading(true);
 
     try {
@@ -176,7 +176,7 @@ export const AuthProvider = ({ children }) => {
 
       // Kiểm tra chính xác biến 'jwt' trả về từ Backend
       if (response.data && response.data.jwt) {
-        const { jwt: jwtToken, userDto: userData, message } = response.data;
+        const { jwt: jwtToken, userDto: userData } = response.data;
 
         // Store JWT token in localStorage
         localStorage.setItem("authToken", jwtToken);
@@ -369,7 +369,7 @@ export const AuthProvider = ({ children }) => {
       setUser(updatedUser);
       setIsLoading(false);
       return { success: true, user: updatedUser };
-    } catch (error) {
+    } catch {
       setIsLoading(false);
       return { success: false, error: "Failed to update profile" };
     }

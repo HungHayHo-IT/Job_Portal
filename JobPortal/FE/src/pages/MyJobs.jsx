@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext";
+
 import { useJobsData } from "../contexts/JobsDataContext";
 import httpClient from "../config/httpClient";
 import { API_ENDPOINTS } from "../config/api";
 import { transformJob } from "../services/companyService";
 
 const MyJobs = () => {
-  const { theme } = useTheme();
-  const { user, isEmployer, isAuthenticated } = useAuth();
+  const { isEmployer, isAuthenticated } = useAuth();
   const { forceRefresh } = useJobsData();
   const [jobs, setJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,7 +33,7 @@ const MyJobs = () => {
       const jobsData = response.data || [];
 
       // Transform jobs to match frontend structure
-      const transformedJobs = jobsData.map(job => transformJob(job));
+      const transformedJobs = jobsData.map((job) => transformJob(job));
       setJobs(transformedJobs);
 
       // Extract company info from first job (all jobs belong to same company)
@@ -81,7 +80,11 @@ const MyJobs = () => {
       );
 
       // Update the job in the local state
-      setJobs(jobs.map((job) => (job.id === jobId ? transformJob(response.data) : job)));
+      setJobs(
+        jobs.map((job) =>
+          job.id === jobId ? transformJob(response.data) : job
+        )
+      );
 
       setSuccess(`Job status updated to ${newStatus}`);
       setTimeout(() => setSuccess(""), 3000);
@@ -119,18 +122,18 @@ const MyJobs = () => {
     }
   };
 
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case "ACTIVE":
-        return "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200";
-      case "CLOSED":
-        return "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200";
-      case "DRAFT":
-        return "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200";
-      default:
-        return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300";
-    }
-  };
+  // const getStatusBadgeClass = (status) => {
+  //   switch (status) {
+  //     case "ACTIVE":
+  //       return "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200";
+  //     case "CLOSED":
+  //       return "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200";
+  //     case "DRAFT":
+  //       return "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200";
+  //     default:
+  //       return "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300";
+  //   }
+  // };
 
   if (!isAuthenticated || !isEmployer) {
     return (

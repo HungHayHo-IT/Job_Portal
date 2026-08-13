@@ -1,4 +1,4 @@
-import httpClient, { withApiVersion } from "../config/httpClient";
+import httpClient from "../config/httpClient";
 import { API_ENDPOINTS } from "../config/api";
 
 /**
@@ -11,13 +11,13 @@ export const transformJob = (job) => {
 
   try {
     requirements = job.requirements ? JSON.parse(job.requirements) : [];
-  } catch (e) {
+  } catch {
     console.warn("Failed to parse requirements for job:", job.id);
   }
 
   try {
     benefits = job.benefits ? JSON.parse(job.benefits) : [];
-  } catch (e) {
+  } catch {
     console.warn("Failed to parse benefits for job:", job.id);
   }
 
