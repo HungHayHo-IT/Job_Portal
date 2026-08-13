@@ -52,6 +52,10 @@ public class ICompanyServiceImpl implements ICompanyService
 
     @Transactional
     @Override
+    @CacheEvict(
+            cacheNames = {"companies", "public-companies"},
+            allEntries = true
+    )
     public boolean createCompany(CompanyDto companyDto) {
         Company company = companyMapper.transformCompanyDtoToEntity(companyDto);
         Company savedCompany = companyRepository.save(company);
@@ -60,6 +64,10 @@ public class ICompanyServiceImpl implements ICompanyService
 
     @Transactional
     @Override
+    @CacheEvict(
+            cacheNames = {"companies", "public-companies"},
+            allEntries = true
+    )
     public boolean updateCompanyDetails(Long id, CompanyDto companyDto) {
         int updateCompany = companyRepository.updateCompanyDetails(
                 id,companyDto.name(),companyDto.logo(),
@@ -72,6 +80,10 @@ public class ICompanyServiceImpl implements ICompanyService
 
     @Transactional
     @Override
+    @CacheEvict(
+            cacheNames = {"companies", "public-companies"},
+            allEntries = true
+    )
     public void deleteCompanyById(Long id) {
         companyRepository.deleteById(id);
     }

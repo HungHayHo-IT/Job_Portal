@@ -14,6 +14,12 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class CaffeineCacheConfig {
 
+    @Value("${cache.public-companies.ttl-minutes:5}")
+    private int publicCompaniesCacheTtlMinutes;
+
+    @Value("${cache.public-companies.max-size:100}")
+    private int publicCompaniesCacheMaxSize;
+
     @Value("${cache.jobs.ttl-minutes:5}")
     private int jobsCacheTtlMinutes;
 
@@ -35,26 +41,50 @@ public class CaffeineCacheConfig {
     @Bean
     public CacheManager caffeineCacheManager() {
 
-        CaffeineCache jobsCache = new CaffeineCache("jobs",
+        CaffeineCache jobsCache = new CaffeineCache(
+                "jobs",
                 Caffeine.newBuilder()
                         .expireAfterWrite(jobsCacheTtlMinutes, TimeUnit.MINUTES)
                         .maximumSize(jobsCacheMaxSize)
-                        .build());
+                        .build()
+        );
 
-        CaffeineCache companiesCache = new CaffeineCache("companies",
+        CaffeineCache companiesCache = new CaffeineCache(
+                "companies",
                 Caffeine.newBuilder()
                         .expireAfterWrite(companiesCacheTtlMinutes, TimeUnit.MINUTES)
                         .maximumSize(companiesCacheMaxSize)
-                        .build());
+                        .build()
+        );
 
-        CaffeineCache rolesCache = new CaffeineCache("roles",
+        CaffeineCache publicCompaniesCache = new CaffeineCache(
+                "public-companies",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(
+                                publicCompaniesCacheTtlMinutes,
+                                TimeUnit.MINUTES
+                        )
+                        .maximumSize(publicCompaniesCacheMaxSize)
+                        .build()
+        );
+
+        CaffeineCache rolesCache = new CaffeineCache(
+                "roles",
                 Caffeine.newBuilder()
                         .expireAfterWrite(rolesCacheTtlDays, TimeUnit.DAYS)
                         .maximumSize(rolesCacheMaxSize)
-                        .build());
+                        .build()
+        );
 
         SimpleCacheManager manager = new SimpleCacheManager();
-        manager.setCaches(Arrays.asList(jobsCache, companiesCache, rolesCache));
+
+        manager.setCaches(Arrays.asList(
+                jobsCache,
+                companiesCache,
+                publicCompaniesCache,
+                rolesCache
+        ));
+
         return manager;
     }
 
