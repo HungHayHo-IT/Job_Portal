@@ -1,50 +1,34 @@
 
-# ==========================
-# Stage 1: Download dependencies
-# ==========================
-ARG BASE_JDK_IMAGE=eclipse-temurin:17-jdk-alpine
-ARG BASE_JRE_IMAGE=eclipse-temurin:17-jre-alpine
+#stage1: Build spring boot application
+FROM eclipse-temurin:17-jdk-alpine AS builder
+WORKDIR /workspace
 
-FROM ${BASE_JDK_IMAGE} AS dependencies
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
 
-RUN apk add --no-cache maven
+RUN chmod +x mvnw
 
-WORKDIR /build
+RUN ./mvnw -B -ntp dependency:go-offline
 
-COPY pom.xml .
+COPY src/ src/
 
-# Tải trước toàn bộ dependency để tận dụng Docker cache
-RUN mvn dependency:go-offline
+RUN ./mvnw -B -ntp clean package -DskipTests
 
-# ==========================
-# Stage 2: Build application
-# ==========================
-FROM dependencies AS builder
+#stage 2: Runtime image
+FROM eclipse-temurin:17-jre-alpine AS runtime
 
-WORKDIR /build
-
-COPY src ./src
-
-RUN mvn package -DskipTests
-
-# ==========================
-# Stage 3: Runtime
-# ==========================
-FROM ${BASE_JRE_IMAGE} AS runtime
-
+RUN addgroup -S spring && adduser -S spring -G spring
 WORKDIR /app
 
-VOLUME ["/app/logs"]
+COPY --from=builder --chown=spring:spring \
+    /workspace/target/*.jar \
+    app.jar
 
-ARG JAR_FILE=*.jar
+USER spring:spring
 
-COPY --from=builder /build/target/${JAR_FILE} app.jar
+EXPOSE 8082
 
-ARG IMAGE_VERSION=1.0.0
-
-LABEL author="HungHayHo-IT" \
-      org.opencontainers.image.version="${IMAGE_VERSION}" \
-      org.opencontainers.image.title="Job Portal" \
-      org.opencontainers.image.description="Spring Boot job portal "
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD wget -qO- http://localhost:8082/actuator/health > /dev/null || exit 1
 
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
