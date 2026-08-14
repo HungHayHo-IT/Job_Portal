@@ -1,0 +1,123 @@
+name: Job Portal CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-test:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: JobPortal/BE
+
+    services:
+      mysql:
+        image: mysql:8.4
+
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: jobportaldb
+          MYSQL_USER: jobportal
+          MYSQL_PASSWORD: jobportal_password
+
+        ports:
+          - 3306:3306
+
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_URL: jdbc:mysql://127.0.0.1:3306/jobportaldb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: jobportal
+      DB_PASSWORD: jobportal_password
+      JWT_SECRET: github-actions-ci-secret-key-at-least-32-characters
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+          cache-dependency-path: JobPortal/BE/pom.xml
+
+      - name: Grant execute permission to Maven Wrapper
+        run: chmod +x mvnw
+
+      - name: Run backend tests
+        run: ./mvnw -B -ntp verify
+
+  frontend-check:
+    name: Frontend lint and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    defaults:
+      run:
+        working-directory: JobPortal/FE
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: JobPortal/FE/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Build frontend
+        run: npm run build
+
+  docker-build:
+    name: Docker images build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    needs:
+      - backend-test
+      - frontend-check
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            --tag jobportal-backend:ci \
+            JobPortal/BE
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            --build-arg VITE_API_BASE_URL=/api/v1 \
+            --tag jobportal-frontend:ci \
+            JobPortal/FE
