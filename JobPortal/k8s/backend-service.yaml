@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: jobportal
+spec:
+  type: ClusterIP
+
+  selector:
+    app: jobportal-backend
+
+  ports:
+    - name: http
+      port: 8082
+      targetPort: http

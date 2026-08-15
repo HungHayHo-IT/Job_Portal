@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jobportal
+  labels:
+    app.kubernetes.io/name: jobportal
+    app.kubernetes.io/environment: local

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobportal-mysql
+  namespace: jobportal
+spec:
+  type: ClusterIP
+  selector:
+    app:  jobportal-mysql
+
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: mysql
